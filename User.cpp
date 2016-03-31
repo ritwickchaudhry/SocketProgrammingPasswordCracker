@@ -9,13 +9,14 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<sys/un.h>
+#include<string>
 
 using namespace std;
 
-#define string check = "Who are you?";
-#define string ask_hash = "Send Hash to Crack"
-#define string ask_pwd_length = "Send Password Length";
-#define string ask_pwd_type = "Send Password Type";
+#define  check  "Who are you?"
+#define  ask_hash  "Send Hash to Crack"
+#define  ask_pwd_length  "Send Password Length"
+#define  ask_pwd_type  "Send Password Type"
 
 int main(int argc, char *argv[])
 {
@@ -31,9 +32,15 @@ int main(int argc, char *argv[])
 	int port_no = atoi(argv[2]);
 	string server_name = argv[1];
 
-	int password_length = atoi(argv[4]);
-	string hash = argv[3];
-	string password_type = argv[5];
+	string password_length1 = argv[4];
+	string hash1 = argv[3];
+	string password_type1 = argv[5];
+	char password_length[password_length1.size()+1];
+	char hash[hash1.size()+1];
+	char password_type[password_type1.size()+1];
+	strcpy(password_length, password_length1.c_str());
+	strcpy(password_type,password_type1.c_str());
+	strcpy(hash,hash1.c_str());
 
 	int socket_fd = socket(AF_INET,SOCK_STREAM,0);
 	if(socket_fd == -1)
@@ -66,20 +73,97 @@ int main(int argc, char *argv[])
 
 	
 	//Setup Connection
-	int connect_error = connect(socket_fd,(sockaddr*)&server,sizeof(sockaddr))
+	int connect_error = connect(socket_fd,(sockaddr*)&server,sizeof(sockaddr));
 	if(connect_error == -1)
 	{
 		cout<< "Connection Failed"<<endl;
 		return 8;
 	}
 
-	
-	int send_error = send(socket_fd,"ab",2,0);
-	if(send_error == -1)
-	{
-		cout<<"Error in Sending"<<endl;
-		return 8;
-	}
+	char buffer[1024];
+	int send_error;
+	int number_of_chars;
+	memset(buffer,0,1024);
+	string response;
+	//#######################################################
+	//-------------------Server asks identity----------------
+	//#######################################################
+	number_of_chars = recv(socket_fd,buffer,1024,0);
+    if(number_of_chars < 0)
+    {
+   		cout<<"Error in Receiving question from server about identity"<<endl;
+     	return 8;
+    }
+    buffer[number_of_chars] = '\0';
+    response = string(buffer);
+   	
+   	cout<<"Response from Server is "<<response<<endl;
+    if (response == check)
+    {	
+    	cout<<"Hi";
+    	send_error = send(socket_fd,"User",5,0);
+		if(send_error == -1)
+		{
+			cout<<"Error in Sending Identity"<<endl;
+			return 8;
+		}
+		memset(buffer,0,1024);
+		number_of_chars = recv(socket_fd,buffer,1024,0);
+	    if(number_of_chars < 0)
+	    {
+	   		cout<<"Error in Receiving question from server about hash"<<endl;
+	     	return 8;
+	    }
+	    buffer[number_of_chars] = '\0';
+	    response = string(buffer);
+	    if (response == ask_hash)
+	    {
+	    	send_error = send(socket_fd,hash,hash1.size(),0);
+			if(send_error == -1)
+			{
+				cout<<"Error in Sending Hash"<<endl;
+				return 8;
+			}
+			memset(buffer,0,1024);
+			number_of_chars = recv(socket_fd,buffer,1024,0);
+		    if(number_of_chars < 0)
+		    {
+		   		cout<<"Error in Receiving question from server about length"<<endl;
+		     	return 8;
+		    }
+		    buffer[number_of_chars] = '\0';
+		    response = string(buffer);
+		    if (response == ask_pwd_length)
+		    {
+		    	send_error = send(socket_fd,password_length,password_length1.size(),0);
+				if(send_error == -1)
+				{
+					cout<<"Error in Sending Password length"<<endl;
+					return 8;
+				}
+				memset(buffer,0,1024);
+				number_of_chars = recv(socket_fd,buffer,1024,0);
+			    if(number_of_chars < 0)
+			    {
+			   		cout<<"Error in Receiving question from server about type"<<endl;
+			     	return 8;
+			    }
+			    buffer[number_of_chars] = '\0';
+			    response = string(buffer);
+			    if (response == ask_pwd_type)
+			    {
+			    	send_error = send(socket_fd,password_type,password_type1.size(),0);
+					if(send_error == -1)
+					{
+						cout<<"Error in Sending Password type"<<endl;
+						return 8;
+					}
+					else cout<<"EVERYTHING SENT SUCCESSFULLY"<<endl;
+			    }
+			    
+		    }
+	    }
+    }
 
 
 	close(socket_fd);

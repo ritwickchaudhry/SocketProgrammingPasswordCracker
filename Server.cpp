@@ -10,6 +10,7 @@
 #include<netinet/in.h>
 #include<sys/un.h>
 #include<vector>
+#include<string>
 
 using namespace std;
 
@@ -32,10 +33,10 @@ struct user_struct
 vector<user_struct> users;
 vector<int> workers;
 
-#define string check = "Who are you?";
-#define string ask_hash = "Send Hash to Crack"
-#define string ask_pwd_length = "Send Password Length";
-#define string ask_pwd_type = "Send Password Type";
+#define  check  "Who are you?"
+#define  ask_hash  "Send Hash to Crack"
+#define  ask_pwd_length  "Send Password Length"
+#define  ask_pwd_type  "Send Password Type"
 
 int main(int argc, char *argv[])
 {
@@ -63,11 +64,12 @@ int main(int argc, char *argv[])
 
 	
 	struct sockaddr_in client;
-
-     int bind_error = bind(socket_fd, (struct sockaddr *) &server, sizeof(server)) < 0) ;			
+    int bind_error = bind(socket_fd, (struct sockaddr *) &server, sizeof(server));			
+	if(bind_error == -1)
 	{
 		cout<<"ERROR on binding"<<endl;
 		return 8;
+
 	}
      socklen_t size_struct;
      size_struct=sizeof(struct sockaddr_in);
@@ -81,7 +83,7 @@ int main(int argc, char *argv[])
 	   	listen(socket_fd,size_struct);
 	    int new_socket_fd = accept(socket_fd, (struct sockaddr *) &client, &size_struct);
 	    
-	    if(client_socket_fd  < 0)
+	    if(new_socket_fd  < 0)
 	     {
 	     	cout<<"Error in Connection with client"<<endl;
 	     	return 8;
@@ -95,7 +97,7 @@ int main(int argc, char *argv[])
 		}
 
 	    char buffer[1024];
-	    int number_of_chars = recv(client_socket_fd,buffer,1024,0);
+	    int number_of_chars = recv(new_socket_fd,buffer,1024,0);
 	    if(number_of_chars < 0)
 	    {
 	   		cout<<"Error in Receiving Message from client"<<endl;
@@ -127,7 +129,7 @@ int main(int argc, char *argv[])
 
 			memset(buffer,0,1024);
 
-		    number_of_chars = recv(client_socket_fd,buffer,1024,0);
+		    number_of_chars = recv(new_socket_fd,buffer,1024,0);
 		    //Check for errors
 		    if(number_of_chars < 0)
 		    {
@@ -151,7 +153,7 @@ int main(int argc, char *argv[])
 
 			memset(buffer,0,1024);
 
-		    number_of_chars = recv(client_socket_fd,buffer,1024,0);
+		    number_of_chars = recv(new_socket_fd,buffer,1024,0);
 		    //Check for errors
 		    if(number_of_chars < 0)
 		    {
@@ -160,8 +162,7 @@ int main(int argc, char *argv[])
 		    }
 
 		    buffer[number_of_chars] = '\0';
-		    response = string(buffer);
-		    temp.length = response;
+		    temp.length = atoi(buffer);
 
 	    	//#######################################################
 	    	//--------------ASK FOR PASSWORD TYPE--------------------
@@ -175,7 +176,7 @@ int main(int argc, char *argv[])
 
 			memset(buffer,0,1024);
 
-		    number_of_chars = recv(client_socket_fd,buffer,1024,0);
+		    number_of_chars = recv(new_socket_fd,buffer,1024,0);
 		    //Check for errors
 		    if(number_of_chars < 0)
 		    {
@@ -197,7 +198,7 @@ int main(int argc, char *argv[])
 				cout<<"Error in Sending Confirmation"<<endl;
 				return 8;
 			}
-    		users.push_back(temp)	    
+    		users.push_back(temp);	    
     		cout<<temp.hash<<endl;
     		cout<<temp.length<<endl;
     		cout<<temp.type<<endl;
