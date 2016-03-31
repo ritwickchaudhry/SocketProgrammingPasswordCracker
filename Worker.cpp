@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
 		return 8;
 	}
 
+	
+
 	int send_error = send(socket_fd,"hello",2,0);
 	if(send_error == -1)
 	{
