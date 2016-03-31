@@ -12,28 +12,19 @@
 
 using namespace std;
 
-#define string check = "Who are you?";
-#define string ask_hash = "Send Hash to Crack"
-#define string ask_pwd_length = "Send Password Length";
-#define string ask_pwd_type = "Send Password Type";
-
 int main(int argc, char *argv[])
 {
-	struct sockaddr_in server;
-	struct sockaddr_in my_address;
-
-	if(argc < 6)
+	if(argc < 3)
 	{
-		cout<<"Use the correct usage:./Client <server ip/host-name> <server-port> <hash> <passwd-length> <binary-string>"<<endl;
+		cout<<"Use the correct usage:./worker <server ip/host-name> <server-port>"<<endl;
 		return 0;
 	}
 
+	struct sockaddr_in server;
+	struct sockaddr_in worker_address;
+
 	int port_no = atoi(argv[2]);
 	string server_name = argv[1];
-
-	int password_length = atoi(argv[4]);
-	string hash = argv[3];
-	string password_type = argv[5];
 
 	int socket_fd = socket(AF_INET,SOCK_STREAM,0);
 	if(socket_fd == -1)
@@ -44,37 +35,31 @@ int main(int argc, char *argv[])
 
 	struct hostent *server_host;
 	server_host = gethostbyname(argv[1]);
+	
 	if(server_host == NULL)
 	{
 		cout<<"No Server found by this host name"<<endl;
 		return 0;
 	}
 
- 
-	//Populate Server Struct Info
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port_no);
 	server.sin_addr = *((struct in_addr*)server_host->h_addr);
 	memset(&(server.sin_zero),'\0',8);
 
-	//Populate My Struct Info
-	my_address.sin_family = AF_INET;
-	my_address.sin_port = htons(port_no);
-	my_address.sin_addr.s_addr = INADDR_ANY;
-	memset(&(my_address.sin_zero),'\0',8);
+	worker_address.sin_family = AF_INET;
+	worker_address.sin_port = htons(port_no);
+	worker_address.sin_addr.s_addr = INADDR_ANY;
+	memset(&(worker_address.sin_zero),'\0',8);
 
-
-	
-	//Setup Connection
-	int connect_error = connect(socket_fd,(sockaddr*)&server,sizeof(sockaddr))
+	int connect_error = connect(socket_fd,(sockaddr*)&server,sizeof(sockaddr));
 	if(connect_error == -1)
 	{
 		cout<< "Connection Failed"<<endl;
 		return 8;
 	}
 
-	
-	int send_error = send(socket_fd,"ab",2,0);
+	int send_error = send(socket_fd,"hello",2,0);
 	if(send_error == -1)
 	{
 		cout<<"Error in Sending"<<endl;
@@ -85,4 +70,4 @@ int main(int argc, char *argv[])
 	close(socket_fd);
 	return 0;
 
-}	
+}
