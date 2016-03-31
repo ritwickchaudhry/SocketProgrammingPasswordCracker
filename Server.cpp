@@ -69,23 +69,22 @@ int main(int argc, char *argv[])
 	// 	i++;
 	// }
 
-	struct sockaddr_in cli_addr;
+	struct sockaddr_in client;
 
-     if (bind(socket_fd, (struct sockaddr *) &server,
-              sizeof(server)) < 0) 
-				cout<<"ERROR on binding"<<endl;
+     int bind_error = bind(socket_fd, (struct sockaddr *) &server, sizeof(server)) < 0) 			
+	{
+		cout<<"ERROR on binding"<<endl;
+		return 8;
+	}
 
-     socklen_t clilen;
-     clilen=sizeof(struct sockaddr_in);
+     socklen_t size_struct;
+     size_struct=sizeof(struct sockaddr_in);
     
-    listen(socket_fd,5);
+    listen(socket_fd,);
     
+    int client_socket_fd = accept(socket_fd, (struct sockaddr *) &client, &size_struct);
 
-     int newsockfd = accept(socket_fd, 
-                 (struct sockaddr *) &cli_addr, 
-                 &clilen);
-
-     if(newsockfd  < 0)
+     if(client_socket_fd  < 0)
      {
      	cout<<"Error in Connection"<<endl;
      	return 8;
@@ -108,7 +107,7 @@ int main(int argc, char *argv[])
      char buffer[1024];
      // cout<<"Yo"<<endl;
 
-     int number_of_chars = recv(newsockfd,buffer,1024,0);
+     int number_of_chars = recv(client_socket_fd,buffer,1024,0);
      
      if(number_of_chars < 0)
      {
@@ -126,7 +125,7 @@ int main(int argc, char *argv[])
      // 	cout<<buffer[i]<<" ";
      // }
 
-     close(newsockfd);
+     close(client_socket_fd);
      close(socket_fd);
 	return 0;
 
