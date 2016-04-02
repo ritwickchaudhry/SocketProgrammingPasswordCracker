@@ -11,7 +11,6 @@
 #include<sys/un.h>
 #include<vector>
 #include<string>
-#include<cstring>
 
 using namespace std;
 
@@ -31,15 +30,6 @@ struct user_struct
 	}
 };
 
-int lengtharr(string a)
-{
-	if(a=="111") return 62;
-	else if (a=="101" || a=="011") return 36;
-	else if (a=="100" || a=="010") return 26;
-	else if (a=="001") return 10;
-	else if (a=="110") return 52;
-	else return 0;
- }
 vector<user_struct> busyusers;
 vector<int> busyworkers;
 
@@ -224,8 +214,7 @@ int main(int argc, char *argv[])
 				cout<<"Error in Sending Confirmation"<<endl;
 				return 8;
 			}
-			int i=0,j=0;
-			string a,b;
+
 			//cout<<"bdvkqdhbfvqdkvbqdvkbqdvkqdhvbqd"<<endl;
 			//no worker is free
 			if(freeworkers.size()<1)
@@ -249,13 +238,7 @@ int main(int argc, char *argv[])
 					if(number_of_free_workers == 1)
 					{
 						cout<<"dadadada"<<endl;
-						int len=lengtharr(temp.type);
-						i=0;
-						j=len-1;
-						a=to_string(i);
-						b=to_string(j);
-						encoded = encoded + space + a + space + b;
-						cout<<"ENCODED "<<encoded<<endl;
+						encoded = encoded + space + "11";
 						char encoded_str[encoded.size()+1];
 						strcpy(encoded_str,encoded.c_str());
 						send_error = send(freeworkers[0],encoded_str,encoded.size(),0);
@@ -270,12 +253,7 @@ int main(int argc, char *argv[])
 					if(number_of_free_workers == 2)
 					{
 						//Send To Worker 1
-						int len=lengtharr(temp.type);
-						i=0;
-						j=len/2;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded1 = encoded + space + a +space+b;
+						string encoded1 = encoded + space + "21";
 						char encoded1_str[encoded1.size()+1];
 						strcpy(encoded1_str,encoded1.c_str());						
 						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
@@ -285,11 +263,7 @@ int main(int argc, char *argv[])
 							return 8;
 						}
 						//Send To Worker 2
-						i=len/2+1;
-						j=len-1;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded2 = encoded + space + a + space+ b;
+						string encoded2 = encoded + space + "22";
 						char encoded2_str[encoded2.size()+1];
 						strcpy(encoded2_str,encoded2.c_str());						
 						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
@@ -303,12 +277,7 @@ int main(int argc, char *argv[])
 					if(number_of_free_workers == 3)
 					{
 						//Send To Worker 1
-						int len=lengtharr(temp.type);
-						i=0;
-						j=len/3;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded1 = encoded + space + a + space+ b;
+						string encoded1 = encoded + space + "31";
 						char encoded1_str[encoded1.size()+1];
 						strcpy(encoded1_str,encoded1.c_str());						
 						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
@@ -318,11 +287,7 @@ int main(int argc, char *argv[])
 							return 8;
 						}
 						//Send To Worker 2
-						i=len/3 +1;
-						j=2*len/3;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded2 = encoded + space + a + space+ b;
+						string encoded2 = encoded + space + "32";
 						char encoded2_str[encoded2.size()+1];
 						strcpy(encoded2_str,encoded2.c_str());						
 						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
@@ -332,150 +297,13 @@ int main(int argc, char *argv[])
 							return 8;
 						}	
 						//Send To Worker 3
-						i=2*len/3 +1;
-						j=len-1;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded3 = encoded + space + a + space+ b;
+						string encoded3 = encoded + space + "33";
 						char encoded3_str[encoded3.size()+1];
 						strcpy(encoded3_str,encoded3.c_str());						
 						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
 						if(send_error == -1)
 						{
 							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
-							return 8;
-						}	
-						freeworkers.clear();
-					}
-					if(number_of_free_workers == 4)
-					{
-						//Send To Worker 1
-						int len=lengtharr(temp.type);
-						i=0;
-						j=len/4;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded1 = encoded + space + a + space+ b;
-						char encoded1_str[encoded1.size()+1];
-						strcpy(encoded1_str,encoded1.c_str());						
-						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
-							return 8;
-						}
-						//Send To Worker 2
-						i=len/4 +1;
-						j=2*len/4;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded2 = encoded + space + a + space+ b;
-						char encoded2_str[encoded2.size()+1];
-						strcpy(encoded2_str,encoded2.c_str());						
-						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
-							return 8;
-						}	
-						//Send To Worker 3
-						i=2*len/4 +1;
-						j=3*len/4;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded3 = encoded + space + a + space+ b;
-						char encoded3_str[encoded3.size()+1];
-						strcpy(encoded3_str,encoded3.c_str());						
-						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
-							return 8;
-						}	
-						i=3*len/4 +1;
-						j=len-1;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded4 = encoded + space + a + space+ b;
-						char encoded4_str[encoded4.size()+1];
-						strcpy(encoded4_str,encoded4.c_str());						
-						send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 4"<<endl;
-							return 8;
-						}	
-						freeworkers.clear();
-					}
-					if(number_of_free_workers == 5)
-					{
-						//Send To Worker 1
-						int len=lengtharr(temp.type);
-						i=0;
-						j=len/5;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded1 = encoded + space + a + space+ b;
-						char encoded1_str[encoded1.size()+1];
-						strcpy(encoded1_str,encoded1.c_str());						
-						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
-							return 8;
-						}
-						//Send To Worker 2
-						i=len/5 +1;
-						j=2*len/5;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded2 = encoded + space + a + space+ b;
-						char encoded2_str[encoded2.size()+1];
-						strcpy(encoded2_str,encoded2.c_str());						
-						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
-							return 8;
-						}	
-						//Send To Worker 3
-						i=2*len/5 +1;
-						j=3*len/5;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded3 = encoded + space + a + space+ b;
-						char encoded3_str[encoded3.size()+1];
-						strcpy(encoded3_str,encoded3.c_str());						
-						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
-							return 8;
-						}	
-						i=3*len/5 +1;
-						j=4*len/5;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded4 = encoded + space + a + space+ b;
-						char encoded4_str[encoded4.size()+1];
-						strcpy(encoded4_str,encoded4.c_str());						
-						send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 4"<<endl;
-							return 8;
-						}
-						i=4*len/5 +1;
-						j=len-1;
-						a=to_string(i);
-						b=to_string(j);
-						string encoded5 = encoded + space + a + space+ b;
-						char encoded5_str[encoded5.size()+1];
-						strcpy(encoded5_str,encoded5.c_str());						
-						send_error = send(freeworkers[4],encoded5_str,encoded5.size(),0);
-						if(send_error == -1)
-						{
-							cout<<"Error in Sending password to be broken to the worker 4"<<endl;
 							return 8;
 						}	
 						freeworkers.clear();

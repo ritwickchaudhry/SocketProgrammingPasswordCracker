@@ -11,10 +11,12 @@
 #include<sys/un.h>
 #include<vector>
 #include<string>
+#include<pthread.h>
 
 using namespace std;
 
 string check = "Who are you?";
+bool aborted;
 
 //#######################################################################################
 //--------------------------------DECRYPT FUNCTIONS--------------------------------------
@@ -24,6 +26,10 @@ string check = "Who are you?";
 vector<char> symbols;
 int num,u_let,l_let;
 string temp_hash;
+string response;
+char buffer[1024];
+int send_error;
+int number_of_chars;
 
 void print(char* str, int length)
 {
@@ -40,6 +46,7 @@ bool check_hash(char* str, int length)
 
 void Generate(char* test_string, int i, int length, int number_of_workers, int index_worker)
 {
+	//cout<<"CALLED"<<endl;
 	if(i == length)
 	{
 		if(check_hash(test_string,length)) 
@@ -47,11 +54,6 @@ void Generate(char* test_string, int i, int length, int number_of_workers, int i
 			print(test_string,length);
 			exit(EXIT_SUCCESS);
 		}
-		// for(int j=0;j<length;j++)
-		// {
-		// 	cout<<test_string[j];
-		// }
-		// cout<<endl;
 		return; 
 	}
 	else
@@ -659,6 +661,7 @@ void Generate(char* test_string, int i, int length, int number_of_workers, int i
 			}
 		}
 	}
+	return;
 }
 
 string decrypt(string hash, string length, string type, int number_of_workers, int index_worker)
@@ -703,21 +706,78 @@ string decrypt(string hash, string length, string type, int number_of_workers, i
 	// cout<<t3<<endl;
 	// cout<<len<<endl;
 	// cout<<len;
+	cout<<"HIIIIIIIIIIIII"<<endl;
 	char test_string[len];
 	// test_string.resize(0,len);
-	// cout<<"Generate"<<endl;
+	cout<<"Generate"<<endl;
 	Generate(test_string,0,len,number_of_workers,index_worker);
-	
+	//cout<< printer(test_string,len) <<endl;
+	cout<<"Bye"<<endl;
 	
 	return string("YO_Sexy");
 }
 
+void *func(void *)
+{
+	////////////////////
+	    	response = string(buffer);
+		    cout<<"RESPONSE is :::"<<response<<endl;
+		    string hash;
+		    string length;
+		    string type;
+		    int i=0;
+		   	for(;i<response.size();i++)
+		   	{
+		   		if (response[i]==' ')
+		   		{
+		   			hash=response.substr(0,i);
+		   			break;
+		   		}
+		   	}
+		   	int j=i+1;
+		   	for(;j<response.size();j++)
+		   	{
+		   		if (response[j]==' ')
+		   		{
+		   			length=response.substr(i+1,j-i);
+		   			break;
+		   		}
+		   	}
+		   	int k = j;
+			j=j+1;
+		   	for(;j<response.size();j++)
+		   	{
+		   		if (response[j]==' ')
+		   		{
+		   			type=response.substr(k,j-i);
+		   			break;
+		   		}
+		   	}	   	
+			string encoded_traffic = response.substr(j+1);
+		   	cout<<"Hash is "<<hash<<endl;
+		   	cout<<"Length is "<<length<<endl;
+		   	cout<<"Type is "<<type<<"haha"<<endl;
+		   	//cout<<encoded_traffic<<endl;
+
+		   	char encoded_traffic_str[encoded_traffic.size() + 1];
+		   	strcpy(encoded_traffic_str,encoded_traffic.c_str());
+		   	int temp_number = atoi(encoded_traffic_str);
+		   	int number_of_workers = temp_number/10;
+		   	int index_worker = temp_number%10;
+
+		   	cout<<"Index of worker is "<<index_worker<<endl;
+		   	cout<<"Number of workers are "<<number_of_workers<<endl;
+		   	decrypt(hash,length,type,number_of_workers,index_worker);
+		   	/////////////////
+
+}
 
 //#######################################################################################
 
 
 int main(int argc, char *argv[])
 {
+	aborted=false;
 	if(argc < 3)
 	{
 		cout<<"Use the correct usage:./worker <server ip/host-name> <server-port>"<<endl;
@@ -763,11 +823,8 @@ int main(int argc, char *argv[])
 		return 8;
 	}
 	
-	char buffer[1024];
-	int send_error;
-	int number_of_chars;
 	memset(buffer,0,1024);
-	string response;
+	
 	//#######################################################
 	//-------------------Server asks identity----------------
 	//#######################################################
@@ -779,9 +836,6 @@ int main(int argc, char *argv[])
     }
     buffer[number_of_chars] = '\0';
     response = string(buffer);
-   	// cout<<check;
-   	// cout<<number_of_chars;
-   	// cout<<"Response from Server is "<<response<<endl;
     if (response == check)
     {	
     	//cout<<"Hi";
@@ -794,6 +848,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	//######################################################
+	int x=0;
 	while(true)
 	{
 		number_of_chars = recv(socket_fd,buffer,1024,0);
@@ -803,52 +859,26 @@ int main(int argc, char *argv[])
 	     	return 8;
 	    }
 	    buffer[number_of_chars] = '\0';
-	    response = string(buffer);
-	    cout<<"RESPONSE is :::"<<response<<endl;
-	    string hash;
-	    string length;
-	    string type;
-	    int i=0;
-	   	for(;i<response.size();i++)
-	   	{
-	   		if (response[i]==' ')
-	   		{
-	   			hash=response.substr(0,i);
-	   			break;
-	   		}
-	   	}
-	   	int j=i+1;
-	   	for(;j<response.size();j++)
-	   	{
-	   		if (response[j]==' ')
-	   		{
-	   			length=response.substr(i+1,j-i);
-	   			break;
-	   		}
-	   	}
-	   	int k = j;
-		j=j+1;
-	   	for(;j<response.size();j++)
-	   	{
-	   		if (response[j]==' ')
-	   		{
-	   			type=response.substr(k,j-i);
-	   			break;
-	   		}
-	   	}	   	
-		string encoded_traffic = response.substr(j+1);
-	   	cout<<hash<<endl;
-	   	cout<<length<<endl;
-	   	cout<<type<<endl;
-	   	cout<<encoded_traffic<<endl;
+	    
+	    if(strcmp(buffer,"complete")==0)
+	    {
+	    	cout<<"AAA"<<endl;
+	    	aborted=true;
+	    }
+	    else
+	    {
 
-	   	char encoded_traffic_str[encoded_traffic.size() + 1];
-	   	strcpy(encoded_traffic_str,encoded_traffic.c_str());
-	   	int temp_number = atoi(encoded_traffic_str);
-	   	int number_of_workers = temp_number/10;
-	   	int index_worker = temp_number%10;
+	    	aborted=false;
+	    	pthread_t my_thread;
+	    	cout<<"BBB"<<endl;
+	    	int a= pthread_create(&my_thread, NULL, &func, NULL);
+	    	if(a != 0) {
+                        cout<<"Error in creating pthread"<<endl;
+                        return 0;
+            }
+            pthread_detach(my_thread);
+	    }
 
-	   	decrypt(hash,length,type,number_of_workers,index_worker);
 	}
 
 
