@@ -13,10 +13,11 @@
 
 using namespace std;
 
-#define  check  "Who are you?"
-#define  ask_hash  "Send Hash to Crack"
-#define  ask_pwd_length  "Send Password Length"
-#define  ask_pwd_type  "Send Password Type"
+string check = "Who are you?";
+string  ask_hash = "Send Hash to Crack";
+string  ask_pwd_length =  "Send Password Length";
+string  ask_pwd_type  = "Send Password Type";
+
 
 int main(int argc, char *argv[])
 {
@@ -96,12 +97,14 @@ int main(int argc, char *argv[])
     }
     buffer[number_of_chars] = '\0';
     response = string(buffer);
-   	
-   	cout<<"Response from Server is "<<response<<endl;
+   	// cout<<check;
+   	// cout<<number_of_chars;
+   	// cout<<"Response from Server is "<<response<<endl;
     if (response == check)
     {	
-    	cout<<"Hi";
-    	send_error = send(socket_fd,"User",5,0);
+    	//cout<<"Hi";
+    	//Checked Till Here
+    	send_error = send(socket_fd,"User",4,0);
 		if(send_error == -1)
 		{
 			cout<<"Error in Sending Identity"<<endl;
@@ -116,8 +119,11 @@ int main(int argc, char *argv[])
 	    }
 	    buffer[number_of_chars] = '\0';
 	    response = string(buffer);
+	    // cout<<response<<endl;
+	    // cout<<ask_hash<<endl;
 	    if (response == ask_hash)
 	    {
+	    	// cout<<"Hi1"<<endl;
 	    	send_error = send(socket_fd,hash,hash1.size(),0);
 			if(send_error == -1)
 			{

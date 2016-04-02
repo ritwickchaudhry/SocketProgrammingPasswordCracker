@@ -18,10 +18,10 @@ struct user_struct
 {
 	int sock_fd;
 	string hash;
-	int length;
+	string length;
 	string type;
 	user_struct(){}
-	user_struct(int a, string b, int c, string d)
+	user_struct(int a, string b, string c, string d)
 	{
 		sock_fd = a;
 		hash = b;
@@ -30,13 +30,18 @@ struct user_struct
 	}
 };
 
-vector<user_struct> users;
-vector<int> workers;
+vector<user_struct> busyusers;
+vector<int> busyworkers;
 
-#define  check  "Who are you?"
-#define  ask_hash  "Send Hash to Crack"
-#define  ask_pwd_length  "Send Password Length"
-#define  ask_pwd_type  "Send Password Type"
+vector<user_struct> outstanding_users;
+vector<int> freeworkers;
+
+string encoded="";
+string space=" ";
+string  check = "Who are you?";
+string  ask_hash = "Send Hash to Crack";
+string  ask_pwd_length = "Send Password Length";
+string  ask_pwd_type = "Send Password Type";
 
 int main(int argc, char *argv[])
 {
@@ -88,8 +93,11 @@ int main(int argc, char *argv[])
 	     	cout<<"Error in Connection with client"<<endl;
 	     	return 8;
 	     }
-	    
-	    int send_error = send(new_socket_fd,check,11,0);
+
+		char check_str[check.size()+1];
+		strcpy(check_str,check.c_str());
+	
+	    int send_error = send(new_socket_fd,check_str,check.size(),0);
 		if(send_error == -1)
 		{
 			cout<<"Error in Sending"<<endl;
@@ -120,7 +128,11 @@ int main(int argc, char *argv[])
 	    	//#######################################################
 	    	//-------------------ASK FOR HASH------------------------
 	    	//#######################################################
-			send_error = send(new_socket_fd,ask_hash,11,0);
+			char ask_hash_str[ask_hash.size()+1];
+			strcpy(ask_hash_str,ask_hash.c_str());
+
+			send_error = send(new_socket_fd,ask_hash_str,ask_hash.size(),0);
+			
 			if(send_error == -1)
 			{
 				cout<<"Error in Sending Ask Hash"<<endl;
@@ -144,7 +156,11 @@ int main(int argc, char *argv[])
 	    	//#######################################################
 	    	//--------------ASK FOR PASSWORD LENGTH------------------
 	    	//#######################################################
-			send_error = send(new_socket_fd,ask_pwd_length,11,0);
+			
+		    char ask_pwd_length_str[ask_pwd_length.size()+1];
+		    strcpy(ask_pwd_length_str,ask_pwd_length.c_str());
+
+			send_error = send(new_socket_fd,ask_pwd_length_str,ask_pwd_length.size(),0);
 			if(send_error == -1)
 			{
 				cout<<"Error in Sending Ask Password Length"<<endl;
@@ -162,12 +178,15 @@ int main(int argc, char *argv[])
 		    }
 
 		    buffer[number_of_chars] = '\0';
-		    temp.length = atoi(buffer);
+		    temp.length = string(buffer);
 
 	    	//#######################################################
 	    	//--------------ASK FOR PASSWORD TYPE--------------------
 	    	//#######################################################
-			send_error = send(new_socket_fd,ask_pwd_type,11,0);
+			char ask_pwd_type_str[ask_pwd_type.size()+1];
+			strcpy(ask_pwd_type_str,ask_pwd_type.c_str());
+			
+			send_error = send(new_socket_fd,ask_pwd_type_str,ask_pwd_type.size(),0);
 			if(send_error == -1)
 			{
 				cout<<"Error in Sending Ask Password Type"<<endl;
@@ -198,17 +217,124 @@ int main(int argc, char *argv[])
 				cout<<"Error in Sending Confirmation"<<endl;
 				return 8;
 			}
-    		users.push_back(temp);	    
-    		cout<<temp.hash<<endl;
-    		cout<<temp.length<<endl;
-    		cout<<temp.type<<endl;
+
+
+			if(freeworkers.size()<1)
+			{
+				outstanding_users.push_back(temp);
+			}
+			else
+			{
+				busyusers.push_back(temp);
+				//now send a free worker the pasword to be decoded
+
+				encoded=temp.hash + space + temp.length + space + temp.type;
+
+				cout<<"Encoded is "<<encoded<<endl;
+
+				int number_of_free_workers = freeworkers.size();
+				{
+					if(number_of_free_workers == 1)
+					{
+						string encoded = encoded + space + "11";
+						char encoded_str[encoded.size()+1];
+						strcpy(encoded_str,encoded.c_str());
+						send_error = send(freeworkers[0],encoded_str,encoded.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker"<<endl;
+							return 8;
+						}
+						freeworkers.clear();
+					}
+					if(number_of_free_workers == 2)
+					{
+						//Send To Worker 1
+						string encoded1 = encoded + space + "21";
+						char encoded1_str[encoded1.size()+1];
+						strcpy(encoded1_str,encoded1.c_str());						
+						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+							return 8;
+						}
+						//Send To Worker 2
+						string encoded2 = encoded + space + "22";
+						char encoded2_str[encoded2.size()+1];
+						strcpy(encoded2_str,encoded2.c_str());						
+						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+							return 8;
+						}
+						freeworkers.clear();
+					}
+					if(number_of_free_workers == 3)
+					{
+						//Send To Worker 1
+						string encoded1 = encoded + space + "31";
+						char encoded1_str[encoded1.size()+1];
+						strcpy(encoded1_str,encoded1.c_str());						
+						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+							return 8;
+						}
+						//Send To Worker 2
+						string encoded2 = encoded + space + "32";
+						char encoded2_str[encoded2.size()+1];
+						strcpy(encoded2_str,encoded2.c_str());						
+						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+							return 8;
+						}	
+						//Send To Worker 3
+						string encoded3 = encoded + space + "33";
+						char encoded3_str[encoded3.size()+1];
+						strcpy(encoded3_str,encoded3.c_str());						
+						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+							return 8;
+						}	
+						freeworkers.clear();
+					}
+
+				}
+
+			}
+
     		cout<<"CHECK"<<endl;
+	    	
 	    }
 	    
 	    if(response == "Worker" || response == "worker")
 	    {
-	    	
-	    	workers.push_back(new_socket_fd);
+	    	cout<<response<<endl;
+	    	cout<<new_socket_fd<<endl;
+	    	if(!outstanding_users.empty())
+	    	{
+				encoded=outstanding_users[0].hash + space + outstanding_users[0].length + space + outstanding_users[0].type + "11";
+				char encoded_str[encoded.size()+1];
+				strcpy(encoded_str,encoded.c_str());
+				send_error = send(new_socket_fd,encoded_str,encoded.size(),0);
+				if(send_error == -1)
+				{
+					cout<<"Error in Sending password to be broken to the worker"<<endl;
+					return 8;
+				}
+				outstanding_users.erase(outstanding_users.begin());
+	    	}
+	    	else
+	    	{
+		    	freeworkers.push_back(new_socket_fd);
+	    	}
 	    }
 	 
     }

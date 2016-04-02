@@ -75,7 +75,7 @@ void Generate(char* test_string, int i, int length)
 				{
 					// cout<<"YOOO"<<endl;
 					//num = 1 u_let = 0 l_let=1
-					for(int j=0; (j<10) || (j>35 && j<62);j++)
+					for(int j=0; (j<10) ;j++)
 					{
 						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
 						// cout<<symbols[j];					
