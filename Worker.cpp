@@ -645,7 +645,7 @@ void Generate(char* test_string, int i, int length, int number_of_workers, int i
 								}									
 							}
 							else
-							
+							{
 								for(int j=54; j<62;j++)
 								{
 									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
@@ -658,7 +658,6 @@ void Generate(char* test_string, int i, int length, int number_of_workers, int i
 				}			
 			}
 		}
-
 	}
 }
 
@@ -687,6 +686,8 @@ string decrypt(string hash, string length, string type, int number_of_workers, i
 	strcpy(length_str,length.data());
 	int len = atoi(length_str);
 	
+
+
 	char temp_num_str[type.size()+1];
 	strcpy(temp_num_str,type.data());
 	int temp_num = atoi(temp_num_str);	
@@ -707,8 +708,8 @@ string decrypt(string hash, string length, string type, int number_of_workers, i
 	// cout<<"Generate"<<endl;
 	Generate(test_string,0,len,number_of_workers,index_worker);
 	
-
-	// return string("YO_Sexy");
+	
+	return string("YO_Sexy");
 }
 
 
@@ -825,12 +826,13 @@ int main(int argc, char *argv[])
 	   			break;
 	   		}
 	   	}
+	   	int k = j;
 		j=j+1;
 	   	for(;j<response.size();j++)
 	   	{
 	   		if (response[j]==' ')
 	   		{
-	   			type=response.substr(i+1,j-i);
+	   			type=response.substr(k,j-i);
 	   			break;
 	   		}
 	   	}	   	
