@@ -10,6 +10,7 @@
 #include<netinet/in.h>
 #include<sys/un.h>
 #include<string>
+#include<sys/time.h>
 
 using namespace std;
 
@@ -81,6 +82,8 @@ int main(int argc, char *argv[])
 	message=user + space + hash1 + space +password_length1 +space + password_type1; 
 	char message_str[message.size()+1];
 	strcpy(message_str, message.c_str());
+	timeval start, end;
+	gettimeofday(&start, NULL);
 	send_error = send(socket_fd,message_str,message.size(),0);
 	if(send_error == -1)
 	{
@@ -96,8 +99,10 @@ int main(int argc, char *argv[])
     }
     buffer[number_of_chars] = '\0';
     string response = string(buffer);
-    cout<<"response is "<<response<<endl;
-
+    
+    gettimeofday(&end, NULL);
+	//cout<<"Time: "<<(double)(end_tv.sec - start.tv_sec + (double)(end.tv_usec - start.tv_usec)/100000.0)<<endl;
+	cout<<response<<" "<<(double)(end.tv_sec - start.tv_sec + (double)(end.tv_usec - start.tv_usec)/1000000.0)<<endl;
 	close(socket_fd);
 	return 0;
 
