@@ -62,8 +62,9 @@ bool check_hash(char* str, int length)
 
 void Generate(char* test_string, int i, int length, int first, int second)
 {
-	if(!flag || !aborted)
+	if(!flag && !aborted)
 	{
+		// cout<<"Yo"<<endl;
 		if(i == length)
 		{
 			if(check_hash(test_string,length)) 
@@ -76,7 +77,7 @@ void Generate(char* test_string, int i, int length, int first, int second)
 				for(int j=0;j<length;j++)
 				{
 					final = final + test_string[j];
-				}+
+				}
 				// cout<<final;
 			}
 			// for(int j=0;j<length;j++)
@@ -327,8 +328,9 @@ void decrypt(string hash, string length, string type, string first, string secon
 	char test_string[len];
 	// test_string.resize(0,len);
 	// cout<<"Generate"<<endl;
+	cout<<"Result generated ----"<<endl;
 	Generate(test_string,0,len,start,end);
-
+	cout<<"Result generated"<<endl;
 	// return string("YO_Sexy");
 	if(!flag) final = "F ";
 	return;
@@ -337,6 +339,7 @@ void decrypt(string hash, string length, string type, string first, string secon
 void *func(void *)
 {
 	response = string(buffer);
+	cout<<"RECEIVED"<<endl;
     //cout<<"RESPONSE is ----- "<<response<<endl;
     string hash;
     string length;

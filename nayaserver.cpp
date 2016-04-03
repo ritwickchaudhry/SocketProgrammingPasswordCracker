@@ -810,11 +810,11 @@ int main(int argc, char *argv[])
                     {   
                         
                                 
-                                cout<<"finally entered this loop "<<endl;
+                                //cout<<"finally entered this loop "<<endl;
                                 string answer;                  
                                 string response = string(buf);
                                 //cout<<response
-                                cout<<"Response "<<response<<endl;
+                                //cout<<"Response "<<response<<endl;
                                 /*
                                 if(response=="----")
                                 {   
@@ -846,33 +846,33 @@ int main(int argc, char *argv[])
                                     //cout<<i<<endl;
                                     answer=response.substr(z+1);
                                     //,response.size()-i
-                                    cout<<"id "<<userid<<" "<<userid.size()<<endl;
-                                    cout<<"answer "<<answer<<" "<<answer.size()<<endl;
+                                    //cout<<"id "<<userid<<" "<<userid.size()<<endl;
+                                    //cout<<"answer "<<answer<<" "<<answer.size()<<endl;
                                     char answer_str[answer.size()+1];
                                     strcpy(answer_str,answer.c_str());
-                                    //cout<<"Answer "<<answer<<endl;
+                                    cout<<"Result received "<<answer<<endl;
                                     int usersock= busyusers[0].sock_fd;
-                                    cout<<"User sock "<<usersock<<endl;
+                                    //cout<<"User sock "<<usersock<<endl;
                                     int send_error = send(usersock,answer_str,answer.size(),0);
                                     if(send_error == -1)
                                     {
                                         cout<<"Error in Sending Identity"<<endl;
                                         return 8;
                                     }
-                                    else cout<<"Answer sent to user"<<endl;
+                                    //else cout<<"Answer sent to user"<<endl;
                                     //now to send the abort signal to the other worker
-                                    cout<<"busyworkers is "<<busyworkers.size()<<endl;
+                                    //cout<<"busyworkers is "<<busyworkers.size()<<endl;
                                     for(int p=0;p<busyworkers.size();p++)
                                     {   
                                         cout<<p<<" "<<i<<endl;
-                                        cout<<"Ahcschks"<<endl;
+                                        //cout<<"Ahcschks"<<endl;
                                         //cout<<"Busyworkers "<<busyworkers[p]<<endl;
                                         if (busyworkers[p].sock_fd!=i)
                                         {   
-                                            cout<<"Send abort to workers"<<endl;
+                                            //cout<<"Send abort to workers"<<endl;
                                             string abortstring="complete";
                                             abortstring = abortstring + " " + userid;
-                                            cout<<"Abort String "<<abortstring<<endl;
+                                            //cout<<"Abort String "<<abortstring<<endl;
                                             char abortstring_str[abortstring.size()+1];
                                             strcpy(abortstring_str,abortstring.c_str());
                                             send_error = send(busyworkers[p].sock_fd,abortstring_str,abortstring.size(),0);

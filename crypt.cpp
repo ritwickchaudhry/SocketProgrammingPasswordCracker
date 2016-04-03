@@ -312,7 +312,7 @@ void decrypt(string hash, string length, string type, string first, string secon
 
 int main()
 {
-	decrypt("aa/tUD6TYCvb2","6","001","0","9");
+	decrypt("aaY/hGUxA42QE","6","001","0","9");
 	cout<<final;
 	// cout<<crypt("Ritwick","a")<<endl;
 }

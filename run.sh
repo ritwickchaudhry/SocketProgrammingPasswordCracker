@@ -6,7 +6,7 @@ g++ test.cpp -lcrypt -o test
 echo "A"
 while IFS='' read -r row || [[ -n "$row" ]]; do
 	echo "$row"
-	./newuser 10.105.12.25 45678 $row 6 001 >> text.txt
+	./newuser 10.105.12.25 34567 $row 6 001 >> text.txt
 done  < "$1"
 
 python average.py 
