@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
                         }
                         buffer[number_of_chars] = '\0';
                         string response = string(buffer);
-                        cout<<"Response "<<response<<endl;
+                        //cout<<"Response "<<response<<endl;
                         string client;
                         string hash;
                         string length;
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
                                 break;
                             }
                         }
-                        cout<<i<<endl;
+                        //cout<<i<<endl;
                    		if (i==response.size()) client = "Worker";
                         cout<<"Client is "<<client<<endl;
                         if (client=="User")
@@ -241,7 +241,10 @@ int main(int argc, char *argv[])
 											cout<<"Error in Sending password to be broken to the worker"<<endl;
 											return 8;
 										}
+										for(int m=0; m<freeworkers.size();m++)
+										busyworkers.push_back(freeworkers[m]);
 										freeworkers.clear();
+
 									}
 									if(number_of_free_workers == 2)
 									{
@@ -274,6 +277,8 @@ int main(int argc, char *argv[])
 											cout<<"Error in Sending password to be broken to the worker 2"<<endl;
 											return 8;
 										}
+										for(int m=0; m<freeworkers.size();m++)
+										busyworkers.push_back(freeworkers[m]);
 										freeworkers.clear();
 									}
 									if(number_of_free_workers == 3)
@@ -321,6 +326,8 @@ int main(int argc, char *argv[])
 											cout<<"Error in Sending password to be broken to the worker 3"<<endl;
 											return 8;
 										}	
+										for(int m=0; m<freeworkers.size();m++)
+										busyworkers.push_back(freeworkers[m]);
 										freeworkers.clear();
 									}
 									if(number_of_free_workers == 4)
@@ -381,6 +388,8 @@ int main(int argc, char *argv[])
 											cout<<"Error in Sending password to be broken to the worker 4"<<endl;
 											return 8;
 										}	
+										for(int m=0; m<freeworkers.size();m++)
+										busyworkers.push_back(freeworkers[m]);
 										freeworkers.clear();
 									}
 									if(number_of_free_workers == 5)
@@ -454,6 +463,8 @@ int main(int argc, char *argv[])
 											cout<<"Error in Sending password to be broken to the worker 4"<<endl;
 											return 8;
 										}	
+										for(int m=0; m<freeworkers.size();m++)
+										busyworkers.push_back(freeworkers[m]);
 										freeworkers.clear();
 									}
 
@@ -463,7 +474,7 @@ int main(int argc, char *argv[])
                         }
                         else if (client=="Worker")
                         {
-                            cout<<"Worker received "<<endl;
+                            cout<<"Worker received "<<newfd<<endl;
                             freeworkers.push_back(newfd);
                         }  
                         
@@ -491,40 +502,21 @@ int main(int argc, char *argv[])
                     else
                     {   
                         // we got some data from a client
-                        for(j = 0; j <= fdmax; j++)
-                        {
-                            // send to everyone!
-                            if (FD_ISSET(j, &master))
-                            {   
+                        // for(j = 0; j <= fdmax; j++)
+                        // {
+                        //     // send to everyone!
+                        //     if (FD_ISSET(j, &master))
+                        //     {   
                             	cout<<"finally entered this loop "<<endl;
-                            	string answer;
-                            	int x=0;
-                                for(;x<busyworkers.size();x++)
-                                {
-                                	if (j==busyworkers[x]) break;
-                                }
-                                cout<<"Socket at server is "<<j<<endl;
-                                //we get which worker replied for the answer
-                                //char buffer[1024];
-                                //memset(buffer, '\0', 1024);
-                                cout<<"came till here"<<endl;
-		                        //int number_of_chars = recv(j,buffer,1024,0);
-		                        //printf("Buffer : %s\n", buffer);
-		                        //cout<<"Number of chars is "<<number_of_chars<<endl;
-		                        if(nbytes < 0)
-		                        {
-		                            cout<<"Error in Receiving Message from client"<<endl;
-		                            return 8;
-		                        }
-		                        //buffer[number_of_chars] = '\0';
-		                        string response = string(buf);
-		                        cout<<"Response "<<response<<endl;
+                            	string answer;                  
+                                string response = string(buf);
+		                        //cout<<"Response "<<response<<endl;
 		                        if(buf[0]=='T')
 		                        {
 		                        	answer=response.substr(2,response.size()-2);
 		                        	char answer_str[answer.size()+1];
 		                        	strcpy(answer_str,answer.c_str());
-		                        	cout<<"Answer "<<answer<<endl;
+		                        	//cout<<"Answer "<<answer<<endl;
 		                        	int usersock= busyusers[0].sock_fd;
 		                        	int send_error = send(usersock,answer_str,answer.size(),0);
 									if(send_error == -1)
@@ -534,15 +526,19 @@ int main(int argc, char *argv[])
 									}
 									else cout<<"Answer sent to user"<<endl;
 									//now to send the abort signal to the other worker
+									cout<<"busyworkers is "<<busyworkers.size()<<endl;
 									for(int p=0;p<busyworkers.size();p++)
-	                                {
-	                                	if (p!=j)
-	                                	{
-	                                		send_error = send(p,"complete",8,0);
+	                                {	
+	                                	cout<<p<<" "<<i<<endl;
+	                                	cout<<"Ahcschks"<<endl;
+	                                	cout<<"Busyworkers "<<busyworkers[p]<<endl;
+	                                	if (busyworkers[p]!=i)
+	                                	{	
+	                                		cout<<"Send abort to workers"<<endl;
+	                                		send_error = send(busyworkers[p],"complete",8,0);
 											if(send_error == -1)
 											{
 												cout<<"Error in Sending Identity"<<endl;
-												return 8;
 											}	
 	                                	}
 	                                }
@@ -553,20 +549,10 @@ int main(int argc, char *argv[])
 	                                }
 	                                busyworkers.clear();	              
 		                        }
-                                /* except the listener and ourselves
-                                if (j != listener && j != i)
-                                {
-                                    int a=outstanding_users[0].sock_fd;
-                                    cout<<"lalala"<<endl;
-                                    if (send(j, "HALO", nbytes, 0) == -1)
-                                    {
-                                        perror("send");
-                                    }
+                               
 
-                                }*/
-
-		                    }
-		                }
+		                //     }
+		                // }
                     }
                 } 
             }

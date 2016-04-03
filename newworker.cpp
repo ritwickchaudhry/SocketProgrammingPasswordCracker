@@ -16,7 +16,7 @@
 using namespace std;
 int socket_fd;
 string check = "Who are you?";
-bool aborted;
+bool aborted=false;
 
 vector<char> symbols_111;
 vector<char> symbols_100;
@@ -61,7 +61,7 @@ bool check_hash(char* str, int length)
 
 void Generate(char* test_string, int i, int length, int first, int second)
 {
-	if(!flag)
+	if(!flag || !aborted)
 	{
 		if(i == length)
 		{
@@ -335,7 +335,7 @@ void decrypt(string hash, string length, string type, string first, string secon
 void *func(void *)
 {
 	response = string(buffer);
-    cout<<"RESPONSE is ----- "<<response<<endl;
+    //cout<<"RESPONSE is ----- "<<response<<endl;
     string hash;
     string length;
     string type;
@@ -350,7 +350,7 @@ void *func(void *)
    			break;
    		}
    	}
-   	cout<<"Hash is "<<hash<<" "<<hash.size()<<endl;
+   	//cout<<"Hash is "<<hash<<" "<<hash.size()<<endl;
    	int j=i+1;
    	for(;j<response.size();j++)
    	{
@@ -360,7 +360,7 @@ void *func(void *)
    			break;
    		}
    	}
-   	cout<<"Length is "<<length<<" "<<length.size()<<endl;
+   	//cout<<"Length is "<<length<<" "<<length.size()<<endl;
    	int k = j;
 	j=j+1;
    	for(;j<response.size();j++)
@@ -371,7 +371,7 @@ void *func(void *)
    			break;
    		}
    	}
-   	cout<<"Type is "<<type<<" "<<type.size()<<endl;
+   	//cout<<"Type is "<<type<<" "<<type.size()<<endl;
    	k=j;
    	j=j+1;
    	//cout<<"hi"<<endl;
@@ -386,7 +386,7 @@ void *func(void *)
    			break;
    		}
    	}
-   	cout<<"Start is "<<start<<" "<<start.size()<<endl;
+   	//cout<<"Start is "<<start<<" "<<start.size()<<endl;
    	k=j;
    	j=j+1;
    	for(;j<response.size();j++)
@@ -394,19 +394,19 @@ void *func(void *)
    			end=response.substr(k+1,j-k);
 
    	}	   	   	
-   	cout<<"End is "<<end<<" "<<end.size()<<endl;
-   	cout<<"Entering DECRYPT"<<endl;
+   	//cout<<"End is "<<end<<" "<<end.size()<<endl;
+   	//cout<<"Entering DECRYPT"<<endl;
    	decrypt(hash,length,type,start,end);
    	//cout<<"Broken password is "<<final<<endl;
    	char final_str[final.size()+1];
    	strcpy(final_str,final.c_str());
    	int send_error = send(socket_fd, final_str, final.size(),0);
-	cout<<"Socket at worker is "<<socket_fd<<endl;
+	//cout<<"Socket at worker is "<<socket_fd<<endl;
 	if(send_error == -1)
 	{
 		cout<<"Error in Sending 1"<<endl;
 	}
-	else cout<<"abcdefghijklom"<<endl;
+	//else cout<<"abcdefghijklom"<<endl;
 }
 
 //#######################################################################################
@@ -479,10 +479,9 @@ int main(int argc, char *argv[])
 	    if(number_of_chars < 0)
 	    {
 	   		cout<<"Error in Receiving password to be decrypted from Server"<<endl;
-	     	return 8;
+
 	    }
 	    buffer[number_of_chars] = '\0';
-	    
 	    if(strcmp(buffer,"complete")==0)
 	    {
 	    	cout<<"AAA"<<endl;
@@ -490,10 +489,8 @@ int main(int argc, char *argv[])
 	    }
 	    else
 	    {
-
-	    	aborted=false;
 	    	pthread_t my_thread;
-	    	cout<<"BBB"<<endl;
+	    	//cout<<"BBB"<<endl;
 	    	int a= pthread_create(&my_thread, NULL, &func, NULL);
 	    	if(a != 0) {
                         cout<<"Error in creating pthread"<<endl;
