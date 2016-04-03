@@ -31,6 +31,18 @@ struct user_struct
     }
 };
 
+struct worker_struct
+{
+    int sock_fd;
+    int user_id;
+    user_struct() {}
+    user_struct(int a, int b)
+    {
+        sock_fd = a;
+ 		user_id = b;
+    }
+};
+
 int lengtharr(string a)
 {
     if(a=="111") return 62;
@@ -112,8 +124,269 @@ int main(int argc, char *argv[])
         	cout<<"Outstanding users remaining"<<endl;
         	if (freeworkers.size()!=0)
         	{
+        		cout<<"jhvvvvvvvaflfqe"<<endl;
         		//divide the work amongst workers
         		busyusers.push_back(outstanding_users[0]);
+
+        		int send_error;
+        		string encoded;
+        		string a,b;
+				string id=to_string(newfd);
+				user_struct temp=outstanding_users[0];
+        		encoded=temp.hash + temp.length + temp.type;
+
+				cout<<"Encoded is "<<encoded<<endl;
+
+				int number_of_free_workers = freeworkers.size();
+				{	
+					cout<<"Number of free workers is "<<number_of_free_workers<<endl;
+					if(number_of_free_workers == 1)
+					{
+						cout<<"dadadada"<<endl;
+						int len=lengtharr(temp.type);
+						i=0;
+						j=len-1;
+						a=to_string(i);
+						b=to_string(j);
+						encoded = encoded + space + a + space + b+space +id;
+						cout<<"ENCODED "<<encoded<<endl;
+						char encoded_str[encoded.size()+1];
+						strcpy(encoded_str,encoded.c_str());
+						send_error = send(freeworkers[0],encoded_str,encoded.size(),0);
+						cout<<"bababa"<<endl;
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker"<<endl;
+							return 8;
+						}
+						for(int m=0; m<freeworkers.size();m++)
+						busyworkers.push_back(freeworkers[m]);
+						freeworkers.clear();
+
+					}
+					if(number_of_free_workers == 2)
+					{
+						//Send To Worker 1
+						int len=lengtharr(temp.type);
+						i=0;
+						j=len/2;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded1 = encoded + space + a +space+b+space +id;
+						char encoded1_str[encoded1.size()+1];
+						strcpy(encoded1_str,encoded1.c_str());						
+						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+							return 8;
+						}
+						//Send To Worker 2
+						i=len/2+1;
+						j=len-1;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded2 = encoded + space + a + space+ b+space +id;
+						char encoded2_str[encoded2.size()+1];
+						strcpy(encoded2_str,encoded2.c_str());						
+						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+							return 8;
+						}
+						for(int m=0; m<freeworkers.size();m++)
+						busyworkers.push_back(freeworkers[m]);
+						freeworkers.clear();
+					}
+					if(number_of_free_workers == 3)
+					{
+						//Send To Worker 1
+						int len=lengtharr(temp.type);
+						i=0;
+						j=len/3;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded1 = encoded + space + a + space+ b+space +id;
+						char encoded1_str[encoded1.size()+1];
+						strcpy(encoded1_str,encoded1.c_str());						
+						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+							return 8;
+						}
+						//Send To Worker 2
+						i=len/3 +1;
+						j=2*len/3;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded2 = encoded + space + a + space+ b+space +id;
+						char encoded2_str[encoded2.size()+1];
+						strcpy(encoded2_str,encoded2.c_str());						
+						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+							return 8;
+						}	
+						//Send To Worker 3
+						i=2*len/3 +1;
+						j=len-1;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded3 = encoded + space + a + space+ b+space +id;
+						char encoded3_str[encoded3.size()+1];
+						strcpy(encoded3_str,encoded3.c_str());						
+						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+							return 8;
+						}	
+						for(int m=0; m<freeworkers.size();m++)
+						busyworkers.push_back(freeworkers[m]);
+						freeworkers.clear();
+					}
+					if(number_of_free_workers == 4)
+					{
+						//Send To Worker 1
+						int len=lengtharr(temp.type);
+						i=0;
+						j=len/4;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded1 = encoded + space + a + space+ b+space +id;
+						char encoded1_str[encoded1.size()+1];
+						strcpy(encoded1_str,encoded1.c_str());						
+						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+							return 8;
+						}
+						//Send To Worker 2
+						i=len/4 +1;
+						j=2*len/4;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded2 = encoded + space + a + space+ b+space +id;
+						char encoded2_str[encoded2.size()+1];
+						strcpy(encoded2_str,encoded2.c_str());						
+						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+							return 8;
+						}	
+						//Send To Worker 3
+						i=2*len/4 +1;
+						j=3*len/4;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded3 = encoded + space + a + space+ b+space +id;
+						char encoded3_str[encoded3.size()+1];
+						strcpy(encoded3_str,encoded3.c_str());						
+						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+							return 8;
+						}	
+						i=3*len/4 +1;
+						j=len-1;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded4 = encoded + space + a + space+ b+space +id;
+						char encoded4_str[encoded4.size()+1];
+						strcpy(encoded4_str,encoded4.c_str());						
+						send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 4"<<endl;
+							return 8;
+						}	
+						for(int m=0; m<freeworkers.size();m++)
+						busyworkers.push_back(freeworkers[m]);
+						freeworkers.clear();
+					}
+					if(number_of_free_workers == 5)
+					{
+						//Send To Worker 1
+						int len=lengtharr(temp.type);
+						i=0;
+						j=len/5;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded1 = encoded + space + a + space+ b+space +id;
+						char encoded1_str[encoded1.size()+1];
+						strcpy(encoded1_str,encoded1.c_str());						
+						send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+							return 8;
+						}
+						//Send To Worker 2
+						i=len/5 +1;
+						j=2*len/5;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded2 = encoded + space + a + space+ b+space +id;
+						char encoded2_str[encoded2.size()+1];
+						strcpy(encoded2_str,encoded2.c_str());						
+						send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+							return 8;
+						}	
+						//Send To Worker 3
+						i=2*len/5 +1;
+						j=3*len/5;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded3 = encoded + space + a + space+ b+space +id;
+						char encoded3_str[encoded3.size()+1];
+						strcpy(encoded3_str,encoded3.c_str());						
+						send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+							return 8;
+						}	
+						i=3*len/5 +1;
+						j=4*len/5;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded4 = encoded + space + a + space+ b+space +id;
+						char encoded4_str[encoded4.size()+1];
+						strcpy(encoded4_str,encoded4.c_str());						
+						send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 4"<<endl;
+							return 8;
+						}
+						i=4*len/5 +1;
+						j=len-1;
+						a=to_string(i);
+						b=to_string(j);
+						string encoded5 = encoded + space + a + space+ b+space +id;
+						char encoded5_str[encoded5.size()+1];
+						strcpy(encoded5_str,encoded5.c_str());						
+						send_error = send(freeworkers[4],encoded5_str,encoded5.size(),0);
+						if(send_error == -1)
+						{
+							cout<<"Error in Sending password to be broken to the worker 4"<<endl;
+							return 8;
+						}	
+						for(int m=0; m<freeworkers.size();m++)
+						busyworkers.push_back(freeworkers[m]);
+						freeworkers.clear();
+					}
+
+				}
         		outstanding_users.erase(outstanding_users.begin(),outstanding_users.begin()+1);
         	}
         }
@@ -203,6 +476,7 @@ int main(int argc, char *argv[])
                             temp.length=length;
                             temp.type=type;
 							string a,b;
+							string id=to_string(newfd);
 							int send_error;
                             if(freeworkers.size()<1)
 							{	
@@ -230,7 +504,7 @@ int main(int argc, char *argv[])
 										j=len-1;
 										a=to_string(i);
 										b=to_string(j);
-										encoded = encoded + space + a + space + b;
+										encoded = encoded + space + a + space + b+space +id;
 										cout<<"ENCODED "<<encoded<<endl;
 										char encoded_str[encoded.size()+1];
 										strcpy(encoded_str,encoded.c_str());
@@ -254,7 +528,7 @@ int main(int argc, char *argv[])
 										j=len/2;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded1 = encoded + space + a +space+b;
+										string encoded1 = encoded + space + a +space+b+space +id;
 										char encoded1_str[encoded1.size()+1];
 										strcpy(encoded1_str,encoded1.c_str());						
 										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
@@ -268,7 +542,7 @@ int main(int argc, char *argv[])
 										j=len-1;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded2 = encoded + space + a + space+ b;
+										string encoded2 = encoded + space + a + space+ b+space +id;
 										char encoded2_str[encoded2.size()+1];
 										strcpy(encoded2_str,encoded2.c_str());						
 										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
@@ -289,7 +563,7 @@ int main(int argc, char *argv[])
 										j=len/3;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded1 = encoded + space + a + space+ b;
+										string encoded1 = encoded + space + a + space+ b+space +id;
 										char encoded1_str[encoded1.size()+1];
 										strcpy(encoded1_str,encoded1.c_str());						
 										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
@@ -303,7 +577,7 @@ int main(int argc, char *argv[])
 										j=2*len/3;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded2 = encoded + space + a + space+ b;
+										string encoded2 = encoded + space + a + space+ b+space +id;
 										char encoded2_str[encoded2.size()+1];
 										strcpy(encoded2_str,encoded2.c_str());						
 										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
@@ -317,7 +591,7 @@ int main(int argc, char *argv[])
 										j=len-1;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded3 = encoded + space + a + space+ b;
+										string encoded3 = encoded + space + a + space+ b+space +id;
 										char encoded3_str[encoded3.size()+1];
 										strcpy(encoded3_str,encoded3.c_str());						
 										send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
@@ -338,7 +612,7 @@ int main(int argc, char *argv[])
 										j=len/4;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded1 = encoded + space + a + space+ b;
+										string encoded1 = encoded + space + a + space+ b+space +id;
 										char encoded1_str[encoded1.size()+1];
 										strcpy(encoded1_str,encoded1.c_str());						
 										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
@@ -352,7 +626,7 @@ int main(int argc, char *argv[])
 										j=2*len/4;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded2 = encoded + space + a + space+ b;
+										string encoded2 = encoded + space + a + space+ b+space +id;
 										char encoded2_str[encoded2.size()+1];
 										strcpy(encoded2_str,encoded2.c_str());						
 										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
@@ -366,7 +640,7 @@ int main(int argc, char *argv[])
 										j=3*len/4;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded3 = encoded + space + a + space+ b;
+										string encoded3 = encoded + space + a + space+ b+space +id;
 										char encoded3_str[encoded3.size()+1];
 										strcpy(encoded3_str,encoded3.c_str());						
 										send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
@@ -379,7 +653,7 @@ int main(int argc, char *argv[])
 										j=len-1;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded4 = encoded + space + a + space+ b;
+										string encoded4 = encoded + space + a + space+ b+space +id;
 										char encoded4_str[encoded4.size()+1];
 										strcpy(encoded4_str,encoded4.c_str());						
 										send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
@@ -400,7 +674,7 @@ int main(int argc, char *argv[])
 										j=len/5;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded1 = encoded + space + a + space+ b;
+										string encoded1 = encoded + space + a + space+ b+space +id;
 										char encoded1_str[encoded1.size()+1];
 										strcpy(encoded1_str,encoded1.c_str());						
 										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
@@ -414,7 +688,7 @@ int main(int argc, char *argv[])
 										j=2*len/5;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded2 = encoded + space + a + space+ b;
+										string encoded2 = encoded + space + a + space+ b+space +id;
 										char encoded2_str[encoded2.size()+1];
 										strcpy(encoded2_str,encoded2.c_str());						
 										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
@@ -428,7 +702,7 @@ int main(int argc, char *argv[])
 										j=3*len/5;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded3 = encoded + space + a + space+ b;
+										string encoded3 = encoded + space + a + space+ b+space +id;
 										char encoded3_str[encoded3.size()+1];
 										strcpy(encoded3_str,encoded3.c_str());						
 										send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
@@ -441,7 +715,7 @@ int main(int argc, char *argv[])
 										j=4*len/5;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded4 = encoded + space + a + space+ b;
+										string encoded4 = encoded + space + a + space+ b+space +id;
 										char encoded4_str[encoded4.size()+1];
 										strcpy(encoded4_str,encoded4.c_str());						
 										send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
@@ -454,7 +728,7 @@ int main(int argc, char *argv[])
 										j=len-1;
 										a=to_string(i);
 										b=to_string(j);
-										string encoded5 = encoded + space + a + space+ b;
+										string encoded5 = encoded + space + a + space+ b+space +id;
 										char encoded5_str[encoded5.size()+1];
 										strcpy(encoded5_str,encoded5.c_str());						
 										send_error = send(freeworkers[4],encoded5_str,encoded5.size(),0);
@@ -501,23 +775,51 @@ int main(int argc, char *argv[])
                     }
                     else
                     {   
-                        // we got some data from a client
-                        // for(j = 0; j <= fdmax; j++)
-                        // {
-                        //     // send to everyone!
-                        //     if (FD_ISSET(j, &master))
-                        //     {   
+                        
+                            	
                             	cout<<"finally entered this loop "<<endl;
                             	string answer;                  
                                 string response = string(buf);
-		                        //cout<<"Response "<<response<<endl;
+                                //cout<<response
+		                        cout<<"Response "<<response<<endl;
+		                        /*
+		                        if(response=="----")
+		                        {	
+		                        	int x=0;
+		                        	for (; x<busyworkers.size();x++)
+		                        	{
+		                        		if (i==busyworkers[x]) 
+		                        		{
+		                        			freeworkers.push_back(busyworkers[x]);
+		                        			busyworkers.erase(busyworkers.begin() + x);
+		                        			break;
+		                        		}
+		                        	}
+
+		                        }*/
+
 		                        if(buf[0]=='T')
-		                        {
-		                        	answer=response.substr(2,response.size()-2);
+		                        {	
+		                        	string userid;
+		                        	int z=2;
+		                        	for(; z<response.size();z++)
+		                        	{
+		                        		if(response[z]==' ')
+		                        		{
+		                        			userid=response.substr(2,z-2);
+		                        			break;
+		                        		}
+		                        	}
+		                        	//cout<<i<<endl;
+		                        	answer=response.substr(z+1);
+		                        	//,response.size()-i
+		                        	cout<<"id "<<userid<<" "<<userid.size()<<endl;
+		                        	cout<<"answer "<<answer<<" "<<answer.size()<<endl;
 		                        	char answer_str[answer.size()+1];
 		                        	strcpy(answer_str,answer.c_str());
 		                        	//cout<<"Answer "<<answer<<endl;
 		                        	int usersock= busyusers[0].sock_fd;
+		                        	cout<<"User sock "<<usersock<<endl;
 		                        	int send_error = send(usersock,answer_str,answer.size(),0);
 									if(send_error == -1)
 									{
@@ -535,19 +837,25 @@ int main(int argc, char *argv[])
 	                                	if (busyworkers[p]!=i)
 	                                	{	
 	                                		cout<<"Send abort to workers"<<endl;
-	                                		send_error = send(busyworkers[p],"complete",8,0);
+	                                		string abortstring="complete";
+	                                		abortstring = abortstring + " " + userid;
+	                                		cout<<"Abort String "<<abortstring<<endl;
+	                                		char abortstring_str[abortstring.size()+1];
+	                                		strcpy(abortstring_str,abortstring.c_str());
+	                                		send_error = send(busyworkers[p],abortstring_str,abortstring.size(),0);
 											if(send_error == -1)
 											{
 												cout<<"Error in Sending Identity"<<endl;
 											}	
 	                                	}
 	                                }
+	                                busyusers.erase(busyusers.begin());	                                                        
 	                                //Also putting all the workers now in the freeworkers vector
 	                                for (int p=0; p<busyworkers.size();p++)
 	                                {
-	                                	freeworkers.push_back(busyworkers[p]);
+	                                    freeworkers.push_back(busyworkers[p]);
 	                                }
-	                                busyworkers.clear();	              
+	                                busyworkers.erase(busyworkers.begin(),busyworkers.begin()+busyworkers.size());	              
 		                        }
                                
 

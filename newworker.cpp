@@ -26,6 +26,7 @@ vector<char> symbols_101;
 vector<char> symbols_011;
 vector<char> symbols_110;
 
+string id;
 int num,u_let,l_let;
 string temp_hash;
 string response;
@@ -71,6 +72,7 @@ void Generate(char* test_string, int i, int length, int first, int second)
 				// exit(EXIT_SUCCESS);
 				flag = 1;
 				final = "T ";
+				final = final + id + " ";
 				for(int j=0;j<length;j++)
 				{
 					final = final + test_string[j];
@@ -386,19 +388,36 @@ void *func(void *)
    			break;
    		}
    	}
+   	k=j;
+   	j=j+1;
+   	//cout<<"hi"<<endl;
+   	///cout<<j<<endl;
+   	//cout<<"ABC "<<response[k+1]<<endl;
+   	for(;j<response.size();j++) 
+   	{	
+   		//cout<<j<<" "<<response[j]<<endl;
+   		if (response[j]==' ')
+   		{
+   			end=response.substr(k+1,j-k-1);
+   			break;
+   		}
+   	}
    	//cout<<"Start is "<<start<<" "<<start.size()<<endl;
    	k=j;
    	j=j+1;
    	for(;j<response.size();j++)
    	{
-   			end=response.substr(k+1,j-k);
+   			id=response.substr(k+1,j-k);
 
-   	}	   	   	
+   	}
+   	//cout<<start<<" "<<end<<"a a a"<<id<<"a"<<endl;	   	   	
    	//cout<<"End is "<<end<<" "<<end.size()<<endl;
    	//cout<<"Entering DECRYPT"<<endl;
+
    	decrypt(hash,length,type,start,end);
    	//cout<<"Broken password is "<<final<<endl;
    	char final_str[final.size()+1];
+   	memset(final_str,'\0',final.size()+1);
    	strcpy(final_str,final.c_str());
    	int send_error = send(socket_fd, final_str, final.size(),0);
 	//cout<<"Socket at worker is "<<socket_fd<<endl;
@@ -473,6 +492,7 @@ int main(int argc, char *argv[])
 
 	//######################################################
 	int x=0;
+	string aborteduser;
 	while(true)
 	{
 		number_of_chars = recv(socket_fd,buffer,1024,0);
@@ -482,10 +502,36 @@ int main(int argc, char *argv[])
 
 	    }
 	    buffer[number_of_chars] = '\0';
-	    if(strcmp(buffer,"complete")==0)
+	    string buffer_str=buffer;
+	    int i=0;
+	    cout<<"HAHAHAH"<<endl;
+	    cout<<buffer_str<<endl;
+	    for(;i<number_of_chars;i++)
+	    {
+	    	if(buffer_str[i]==' ')
+	    	{	
+	    		aborteduser=buffer_str.substr(i+1,buffer_str.size()-i);		
+	    		break;
+	    	}
+	    }
+	    buffer_str=buffer_str.substr(0,i);	    
+	    cout<<buffer_str<<endl;
+	    cout<<"id "<<id<<endl;
+	    cout<<"aborted user "<<aborteduser<<endl;
+	    if(buffer_str=="complete")
 	    {
 	    	cout<<"AAA"<<endl;
-	    	aborted=true;
+	    	if(aborteduser==id)
+	    	{
+	    		aborted=true;
+	    		cout<<"ABORTED"<<endl;	
+	    		//send_error = send(socket_fd,"----",4,0);
+				//if(send_error == -1)
+				//{
+				//	cout<<"Error"<<endl;
+				//}
+	    	}
+	    	
 	    }
 	    else
 	    {

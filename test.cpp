@@ -7,5 +7,5 @@ using namespace std;
 
 int main()
 {
-	cout<<string(crypt("9898886","aa"));
+	cout<<string(crypt("54321","aa"));
 }
