@@ -107,6 +107,17 @@ int main(int argc, char *argv[])
     // main loop
     for(;;)
     {
+        if (outstanding_users.size()!=0)
+        {
+        	cout<<"Outstanding users remaining"<<endl;
+        	if (freeworkers.size()!=0)
+        	{
+        		//divide the work amongst workers
+        		busyusers.push_back(outstanding_users[0]);
+        		outstanding_users.erase(outstanding_users.begin(),outstanding_users.begin()+1);
+        	}
+        }
+
         read_fds = master; // copy it
         if (select(fdmax+1, &read_fds, NULL, NULL, NULL) == -1)
         {
@@ -128,12 +139,13 @@ int main(int argc, char *argv[])
                     }
                     else
                     {   
-                        char buffer[1024];
+                        
                         FD_SET(newfd, &master); // add to master set
                         if (newfd > fdmax)   // keep track of the maximum
                         {
                             fdmax = newfd;
                         }
+                        char buffer[1024];
                         int number_of_chars = recv(newfd,buffer,1024,0);
                         if(number_of_chars < 0)
                         {
@@ -156,6 +168,9 @@ int main(int argc, char *argv[])
                                 break;
                             }
                         }
+                        cout<<i<<endl;
+                   		if (i==response.size()) client = "Worker";
+                        cout<<"Client is "<<client<<endl;
                         if (client=="User")
                         {
                             int j=i+1;
@@ -187,16 +202,276 @@ int main(int argc, char *argv[])
                             temp.hash=hash;
                             temp.length=length;
                             temp.type=type;
-                            outstanding_users.push_back(temp);
+							string a,b;
+							int send_error;
+                            if(freeworkers.size()<1)
+							{	
+								cout<<"hahaha"<<endl;
+								outstanding_users.push_back(temp);
+							}
+							else
+							{	
+								cout<<"bababa"<<endl;
+								busyusers.push_back(temp);
+								//now send a free worker the pasword to be decoded
+
+								encoded=temp.hash + temp.length + temp.type;
+
+								cout<<"Encoded is "<<encoded<<endl;
+
+								int number_of_free_workers = freeworkers.size();
+								{	
+									cout<<"Number of free workers is "<<number_of_free_workers<<endl;
+									if(number_of_free_workers == 1)
+									{
+										cout<<"dadadada"<<endl;
+										int len=lengtharr(temp.type);
+										i=0;
+										j=len-1;
+										a=to_string(i);
+										b=to_string(j);
+										encoded = encoded + space + a + space + b;
+										cout<<"ENCODED "<<encoded<<endl;
+										char encoded_str[encoded.size()+1];
+										strcpy(encoded_str,encoded.c_str());
+										send_error = send(freeworkers[0],encoded_str,encoded.size(),0);
+										cout<<"bababa"<<endl;
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker"<<endl;
+											return 8;
+										}
+										freeworkers.clear();
+									}
+									if(number_of_free_workers == 2)
+									{
+										//Send To Worker 1
+										int len=lengtharr(temp.type);
+										i=0;
+										j=len/2;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded1 = encoded + space + a +space+b;
+										char encoded1_str[encoded1.size()+1];
+										strcpy(encoded1_str,encoded1.c_str());						
+										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+											return 8;
+										}
+										//Send To Worker 2
+										i=len/2+1;
+										j=len-1;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded2 = encoded + space + a + space+ b;
+										char encoded2_str[encoded2.size()+1];
+										strcpy(encoded2_str,encoded2.c_str());						
+										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+											return 8;
+										}
+										freeworkers.clear();
+									}
+									if(number_of_free_workers == 3)
+									{
+										//Send To Worker 1
+										int len=lengtharr(temp.type);
+										i=0;
+										j=len/3;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded1 = encoded + space + a + space+ b;
+										char encoded1_str[encoded1.size()+1];
+										strcpy(encoded1_str,encoded1.c_str());						
+										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+											return 8;
+										}
+										//Send To Worker 2
+										i=len/3 +1;
+										j=2*len/3;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded2 = encoded + space + a + space+ b;
+										char encoded2_str[encoded2.size()+1];
+										strcpy(encoded2_str,encoded2.c_str());						
+										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+											return 8;
+										}	
+										//Send To Worker 3
+										i=2*len/3 +1;
+										j=len-1;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded3 = encoded + space + a + space+ b;
+										char encoded3_str[encoded3.size()+1];
+										strcpy(encoded3_str,encoded3.c_str());						
+										send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+											return 8;
+										}	
+										freeworkers.clear();
+									}
+									if(number_of_free_workers == 4)
+									{
+										//Send To Worker 1
+										int len=lengtharr(temp.type);
+										i=0;
+										j=len/4;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded1 = encoded + space + a + space+ b;
+										char encoded1_str[encoded1.size()+1];
+										strcpy(encoded1_str,encoded1.c_str());						
+										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+											return 8;
+										}
+										//Send To Worker 2
+										i=len/4 +1;
+										j=2*len/4;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded2 = encoded + space + a + space+ b;
+										char encoded2_str[encoded2.size()+1];
+										strcpy(encoded2_str,encoded2.c_str());						
+										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+											return 8;
+										}	
+										//Send To Worker 3
+										i=2*len/4 +1;
+										j=3*len/4;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded3 = encoded + space + a + space+ b;
+										char encoded3_str[encoded3.size()+1];
+										strcpy(encoded3_str,encoded3.c_str());						
+										send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+											return 8;
+										}	
+										i=3*len/4 +1;
+										j=len-1;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded4 = encoded + space + a + space+ b;
+										char encoded4_str[encoded4.size()+1];
+										strcpy(encoded4_str,encoded4.c_str());						
+										send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 4"<<endl;
+											return 8;
+										}	
+										freeworkers.clear();
+									}
+									if(number_of_free_workers == 5)
+									{
+										//Send To Worker 1
+										int len=lengtharr(temp.type);
+										i=0;
+										j=len/5;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded1 = encoded + space + a + space+ b;
+										char encoded1_str[encoded1.size()+1];
+										strcpy(encoded1_str,encoded1.c_str());						
+										send_error = send(freeworkers[0],encoded1_str,encoded1.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 1"<<endl;
+											return 8;
+										}
+										//Send To Worker 2
+										i=len/5 +1;
+										j=2*len/5;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded2 = encoded + space + a + space+ b;
+										char encoded2_str[encoded2.size()+1];
+										strcpy(encoded2_str,encoded2.c_str());						
+										send_error = send(freeworkers[1],encoded2_str,encoded2.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 2"<<endl;
+											return 8;
+										}	
+										//Send To Worker 3
+										i=2*len/5 +1;
+										j=3*len/5;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded3 = encoded + space + a + space+ b;
+										char encoded3_str[encoded3.size()+1];
+										strcpy(encoded3_str,encoded3.c_str());						
+										send_error = send(freeworkers[2],encoded3_str,encoded3.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 3"<<endl;
+											return 8;
+										}	
+										i=3*len/5 +1;
+										j=4*len/5;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded4 = encoded + space + a + space+ b;
+										char encoded4_str[encoded4.size()+1];
+										strcpy(encoded4_str,encoded4.c_str());						
+										send_error = send(freeworkers[3],encoded4_str,encoded4.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 4"<<endl;
+											return 8;
+										}
+										i=4*len/5 +1;
+										j=len-1;
+										a=to_string(i);
+										b=to_string(j);
+										string encoded5 = encoded + space + a + space+ b;
+										char encoded5_str[encoded5.size()+1];
+										strcpy(encoded5_str,encoded5.c_str());						
+										send_error = send(freeworkers[4],encoded5_str,encoded5.size(),0);
+										if(send_error == -1)
+										{
+											cout<<"Error in Sending password to be broken to the worker 4"<<endl;
+											return 8;
+										}	
+										freeworkers.clear();
+									}
+
+								}
+
+							}
                         }
-                        if (client=="Worker")
+                        else if (client=="Worker")
                         {
+                            cout<<"Worker received "<<endl;
                             freeworkers.push_back(newfd);
                         }  
+                        
                     }
                 }
                 else
-                {
+                {	
+                	memset(buf, '\0', 1024);
                     // handle data from a client
                     if ((nbytes = recv(i, buf, sizeof(buf), 0)) <= 0)
                     {
@@ -221,7 +496,64 @@ int main(int argc, char *argv[])
                             // send to everyone!
                             if (FD_ISSET(j, &master))
                             {   
-                                // except the listener and ourselves
+                            	cout<<"finally entered this loop "<<endl;
+                            	string answer;
+                            	int x=0;
+                                for(;x<busyworkers.size();x++)
+                                {
+                                	if (j==busyworkers[x]) break;
+                                }
+                                cout<<"Socket at server is "<<j<<endl;
+                                //we get which worker replied for the answer
+                                //char buffer[1024];
+                                //memset(buffer, '\0', 1024);
+                                cout<<"came till here"<<endl;
+		                        //int number_of_chars = recv(j,buffer,1024,0);
+		                        //printf("Buffer : %s\n", buffer);
+		                        //cout<<"Number of chars is "<<number_of_chars<<endl;
+		                        if(nbytes < 0)
+		                        {
+		                            cout<<"Error in Receiving Message from client"<<endl;
+		                            return 8;
+		                        }
+		                        //buffer[number_of_chars] = '\0';
+		                        string response = string(buf);
+		                        cout<<"Response "<<response<<endl;
+		                        if(buf[0]=='T')
+		                        {
+		                        	answer=response.substr(2,response.size()-2);
+		                        	char answer_str[answer.size()+1];
+		                        	strcpy(answer_str,answer.c_str());
+		                        	cout<<"Answer "<<answer<<endl;
+		                        	int usersock= busyusers[0].sock_fd;
+		                        	int send_error = send(usersock,answer_str,answer.size(),0);
+									if(send_error == -1)
+									{
+										cout<<"Error in Sending Identity"<<endl;
+										return 8;
+									}
+									else cout<<"Answer sent to user"<<endl;
+									//now to send the abort signal to the other worker
+									for(int p=0;p<busyworkers.size();p++)
+	                                {
+	                                	if (p!=j)
+	                                	{
+	                                		send_error = send(p,"complete",8,0);
+											if(send_error == -1)
+											{
+												cout<<"Error in Sending Identity"<<endl;
+												return 8;
+											}	
+	                                	}
+	                                }
+	                                //Also putting all the workers now in the freeworkers vector
+	                                for (int p=0; p<busyworkers.size();p++)
+	                                {
+	                                	freeworkers.push_back(busyworkers[p]);
+	                                }
+	                                busyworkers.clear();	              
+		                        }
+                                /* except the listener and ourselves
                                 if (j != listener && j != i)
                                 {
                                     int a=outstanding_users[0].sock_fd;
@@ -231,11 +563,12 @@ int main(int argc, char *argv[])
                                         perror("send");
                                     }
 
-                                }
-                            }
-                        }
+                                }*/
+
+		                    }
+		                }
                     }
-                } // it’s SO UGLY!
+                } 
             }
         }
     }

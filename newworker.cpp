@@ -14,22 +14,37 @@
 #include<pthread.h>
 
 using namespace std;
-
+int socket_fd;
 string check = "Who are you?";
 bool aborted;
 
-//#######################################################################################
-//--------------------------------DECRYPT FUNCTIONS--------------------------------------
-//#######################################################################################
+vector<char> symbols_111;
+vector<char> symbols_100;
+vector<char> symbols_010;
+vector<char> symbols_001;
+vector<char> symbols_101;
+vector<char> symbols_011;
+vector<char> symbols_110;
 
-
-vector<char> symbols;
 int num,u_let,l_let;
 string temp_hash;
 string response;
 char buffer[1024];
 int send_error;
 int number_of_chars;
+
+bool flag=0;
+string final;
+
+void printvec(vector<char> v)
+{
+	for (int i = 0; i < v.size(); ++i)
+	{
+		cout<<v[i];
+	}
+	cout<<endl;
+	return;
+}
 
 void print(char* str, int length)
 {
@@ -44,146 +59,245 @@ bool check_hash(char* str, int length)
 	return false;
 }
 
-void Generate(char* test_string, int i, int length)
+void Generate(char* test_string, int i, int length, int first, int second)
 {
-	if(i == length)
+	if(!flag)
 	{
-		if(check_hash(test_string,length)) 
+		if(i == length)
 		{
-			print(test_string,length);
-			exit(EXIT_SUCCESS);
-		}
-		// for(int j=0;j<length;j++)
-		// {
-		// 	cout<<test_string[j];
-		// }
-		// cout<<endl;
-		return; 
-	}
-	else
-	{
-		if(num == 1)
-		{
-			if(u_let == 1)
+			if(check_hash(test_string,length)) 
 			{
-				if(l_let == 1)
+				// print(test_string,length);
+				// exit(EXIT_SUCCESS);
+				flag = 1;
+				final = "T ";
+				for(int j=0;j<length;j++)
 				{
-					//num = 1 u_let = 1 l_let=1
-					for(int j=0; j<62;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
+					final = final + test_string[j];
 				}
-				else
-				{
-					//num = 1 u_let = 1 l_let=0
-					for(int j=0; j<35;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				}
+				// cout<<final;
 			}
-			else
-			{
-				if(l_let == 1)
-				{
-					// cout<<"YOOO"<<endl;
-					//num = 1 u_let = 0 l_let=1
-					for(int j=0; (j<10) ;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						// cout<<symbols[j];					
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}
-					for (int j = 36; j <62 ; j++)
-					{
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}	
-
-				}
-				else
-				{
-					//num = 1 u_let = 0 l_let=0
-					for(int j=0; j<10;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-
-				}				
-			}
+			// for(int j=0;j<length;j++)
+			// {
+			// 	cout<<test_string[j];
+			// }
+			// cout<<endl;
+			return; 
 		}
 		else
 		{
-			if(u_let == 1)
-			{
-				if(l_let == 1)
+				if(num == 1)
 				{
-					//num = 0 u_let = 1 l_let=1
-					for(int j=10 ; j<62;j++)
+					if(u_let == 1)
 					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				
+						if(l_let == 1)
+						{
+							//num = 1 u_let = 1 l_let=1
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_111[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_111.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_111[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+						else
+						{
+							//num = 1 u_let = 1 l_let=0
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_110[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_110.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_110[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+					}
+					else
+					{
+						if(l_let == 1)
+						{
+							// cout<<"YOOO"<<endl;
+							//num = 1 u_let = 0 l_let=1
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_101[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_101.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_101[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+						else
+						{
+							//num = 1 u_let = 0 l_let=0
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_100[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_100.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_100[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}				
+					}
 				}
 				else
 				{
-					//num = 0 u_let = 1 l_let=0
-					for(int j=10; j<36;j++)
+					if(u_let == 1)
 					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				
-				}
-			}
-			else
-			{
-				if(l_let == 1)
-				{
-					//num = 0 u_let = 0 l_let=1
-					for(int j=36; j<62;j++)
+						if(l_let == 1)
+						{
+							//num = 0 u_let = 1 l_let=1
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_011[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_011.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_011[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+						else
+						{
+							//num = 0 u_let = 1 l_let=0	
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_010[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_010.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_010[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}				
+						}
+					}
+					else
 					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				
+						if(l_let == 1)
+						{
+							//num = 0 u_let = 0 l_let=1	
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_001[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_001.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_001[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}				
+						}
+					}			
 				}
-			}			
 		}
 	}
+	else return;
 }
 
-string decrypt(string hash, string length, string type)
+void decrypt(string hash, string length, string type, string first, string second)
 {
-
+	final = "";
 	temp_hash = hash;
-	symbols.resize(62);
+	symbols_111.resize(62);
+	symbols_100.resize(10);
+	symbols_010.resize(26);
+	symbols_001.resize(26);
+	symbols_101.resize(36);
+	symbols_011.resize(52);
+	symbols_110.resize(36);
 	//Add Numbers to the symbols set
 	for (int i = 0; i < 10; ++i)
 	{
-		symbols[i]='0' + i;
+		symbols_111[i]='0' + i;
+		symbols_100[i]='0' + i;
+		symbols_101[i]='0' + i;
+		symbols_110[i]='0' + i;
 	}
 	//Add Uppercase letters to the symbols set
 	for (int i = 0; i < 26; ++i)
 	{
-		symbols[i+10] = 'A' + i;
+		symbols_111[i+10] = 'A' + i;
+		symbols_010[i] = 'A' + i;
+		symbols_011[i] = 'A' + i;
+		symbols_110[i+10] = 'A' + i;
 	}
 	//Add Lowercase letters to the symbols set
 	for (int i = 0; i < 26; i++)
 	{
-		symbols[i+36]= 'a' + i;
+		symbols_111[i+36] = 'a' + i;
+		symbols_001[i] = 'a' + i;
+		symbols_011[i+26] = 'a' + i;
+		symbols_101[i+10] = 'a' + i;
 	}
 
 	char length_str[length.size() + 1];
@@ -197,19 +311,31 @@ string decrypt(string hash, string length, string type)
 	l_let = temp_num/100;
 	u_let = temp_num/10 - (l_let*10);
 	num = temp_num%10;
+
+	char first_str[first.size()+1];
+	strcpy(first_str,first.data());
+
+	char second_str[second.size()+1];
+	strcpy(second_str,second.data());
+
+	int start = atoi(first_str);
+	int end = atoi(second_str);
+
+	
 	char test_string[len];
 	// test_string.resize(0,len);
 	// cout<<"Generate"<<endl;
-	Generate(test_string,0,len);
-	
+	Generate(test_string,0,len,start,end);
 
-	return string("YO_Sexy");
+	// return string("YO_Sexy");
+	if(!flag) final = "F ";
+	return;
 }
 
 void *func(void *)
 {
 	response = string(buffer);
-    cout<<"RESPONSE is :::"<<response<<endl;
+    cout<<"RESPONSE is ----- "<<response<<endl;
     string hash;
     string length;
     string type;
@@ -224,17 +350,17 @@ void *func(void *)
    			break;
    		}
    	}
-   	//cout<<"Hash is "<<hash<<endl;
+   	cout<<"Hash is "<<hash<<" "<<hash.size()<<endl;
    	int j=i+1;
    	for(;j<response.size();j++)
    	{
    		if (response[j]==' ')
    		{
-   			length=response.substr(i+1,j-i);
+   			length=response.substr(i+1,j-i-1);
    			break;
    		}
    	}
-   	//cout<<"Length is "<<length<<endl;
+   	cout<<"Length is "<<length<<" "<<length.size()<<endl;
    	int k = j;
 	j=j+1;
    	for(;j<response.size();j++)
@@ -245,7 +371,7 @@ void *func(void *)
    			break;
    		}
    	}
-   	//cout<<"Type is "<<type<<endl;
+   	cout<<"Type is "<<type<<" "<<type.size()<<endl;
    	k=j;
    	j=j+1;
    	//cout<<"hi"<<endl;
@@ -256,11 +382,11 @@ void *func(void *)
    		//cout<<j<<" "<<response[j]<<endl;
    		if (response[j]==' ')
    		{
-   			start=response.substr(k+1,j-k);
+   			start=response.substr(k+1,j-k-1);
    			break;
    		}
    	}
-   	//cout<<"Start is "<<start<<endl;
+   	cout<<"Start is "<<start<<" "<<start.size()<<endl;
    	k=j;
    	j=j+1;
    	for(;j<response.size();j++)
@@ -268,10 +394,19 @@ void *func(void *)
    			end=response.substr(k+1,j-k);
 
    	}	   	   	
-   	//cout<<"End is "<<end<<endl;
-   	decrypt(hash,length,type);
-   	
-
+   	cout<<"End is "<<end<<" "<<end.size()<<endl;
+   	cout<<"Entering DECRYPT"<<endl;
+   	decrypt(hash,length,type,start,end);
+   	//cout<<"Broken password is "<<final<<endl;
+   	char final_str[final.size()+1];
+   	strcpy(final_str,final.c_str());
+   	int send_error = send(socket_fd, final_str, final.size(),0);
+	cout<<"Socket at worker is "<<socket_fd<<endl;
+	if(send_error == -1)
+	{
+		cout<<"Error in Sending 1"<<endl;
+	}
+	else cout<<"abcdefghijklom"<<endl;
 }
 
 //#######################################################################################
@@ -292,7 +427,7 @@ int main(int argc, char *argv[])
 	int port_no = atoi(argv[2]);
 	string server_name = argv[1];
 
-	int socket_fd = socket(AF_INET,SOCK_STREAM,0);
+	socket_fd = socket(AF_INET,SOCK_STREAM,0);
 	if(socket_fd == -1)
 	{
 		cout<<"Socket not Opened : ERROR"<<endl;
@@ -326,29 +461,15 @@ int main(int argc, char *argv[])
 	}
 	
 	memset(buffer,0,1024);
-	
-	//#######################################################
+	cout<<"BOLA"<<endl;
 	//-------------------Server asks identity----------------
-	//#######################################################
-	number_of_chars = recv(socket_fd,buffer,1024,0);
-    if(number_of_chars < 0)
-    {
-   		cout<<"Error in Receiving question from server about identity"<<endl;
-     	return 8;
-    }
-    buffer[number_of_chars] = '\0';
-    response = string(buffer);
-    if (response == check)
-    {	
-    	//cout<<"Hi";
-    	//Checked Till Here
-    	send_error = send(socket_fd,"Worker",6,0);
-		if(send_error == -1)
-		{
-			cout<<"Error in Sending Identity"<<endl;
-			return 8;
-		}
+	send_error = send(socket_fd,"Worker",6,0);
+	if(send_error == -1)
+	{
+		cout<<"Error in Sending Identity"<<endl;
+		return 8;
 	}
+	cout<<"HOLA"<<endl;
 
 	//######################################################
 	int x=0;
@@ -382,7 +503,6 @@ int main(int argc, char *argv[])
 	    }
 
 	}
-
 
 	close(socket_fd);
 	return 0;
