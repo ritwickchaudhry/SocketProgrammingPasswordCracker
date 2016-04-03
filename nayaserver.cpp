@@ -34,9 +34,9 @@ struct user_struct
 struct worker_struct
 {
     int sock_fd;
-    int user_id;
-    user_struct() {}
-    user_struct(int a, int b)
+    string user_id;
+    worker_struct() {}
+    worker_struct(int a, string b)
     {
         sock_fd = a;
         user_id = b;
@@ -53,7 +53,7 @@ int lengtharr(string a)
     else return 0;
 }
 vector<user_struct> busyusers;
-vector<int> busyworkers;
+vector<worker_struct> busyworkers;
 
 vector<user_struct> outstanding_users;
 vector<worker_struct> freeworkers;
@@ -160,8 +160,10 @@ int main(int argc, char *argv[])
                             return 8;
                         }
                         for(int m=0; m<freeworkers.size();m++)
-                        freeworkers[m].user_id=id;
-                        busyworkers.push_back(freeworkers[m]);
+                        {
+                            freeworkers[m].user_id=id;
+                            busyworkers.push_back(freeworkers[m]);
+                        }
                         freeworkers.clear();
 
                     }
@@ -197,8 +199,10 @@ int main(int argc, char *argv[])
                             return 8;
                         }
                         for(int m=0; m<freeworkers.size();m++)
-                        freeworkers[m].user_id=id;
-                        busyworkers.push_back(freeworkers[m]);
+                        {
+                            freeworkers[m].user_id=id;
+                            busyworkers.push_back(freeworkers[m]);
+                        }
                         freeworkers.clear();
                     }
                     if(number_of_free_workers == 3)
@@ -247,8 +251,10 @@ int main(int argc, char *argv[])
                             return 8;
                         }   
                         for(int m=0; m<freeworkers.size();m++)
-                        freeworkers[m].user_id=id;
-                        busyworkers.push_back(freeworkers[m]);
+                        {
+                            freeworkers[m].user_id=id;
+                            busyworkers.push_back(freeworkers[m]);
+                        }
                         freeworkers.clear();
                     }
                     if(number_of_free_workers == 4)
@@ -310,8 +316,10 @@ int main(int argc, char *argv[])
                             return 8;
                         }   
                         for(int m=0; m<freeworkers.size();m++)
-                        freeworkers[m].user_id=id;
-                        busyworkers.push_back(freeworkers[m]);
+                        {
+                            freeworkers[m].user_id=id;
+                            busyworkers.push_back(freeworkers[m]);
+                        }
                         freeworkers.clear();
                     }
                     if(number_of_free_workers == 5)
@@ -386,8 +394,10 @@ int main(int argc, char *argv[])
                             return 8;
                         }   
                         for(int m=0; m<freeworkers.size();m++)
-                        freeworkers[m].user_id=id;
-                        busyworkers.push_back(freeworkers[m]);
+                        {
+                            freeworkers[m].user_id=id;
+                            busyworkers.push_back(freeworkers[m]);
+                        }
                         freeworkers.clear();
                     }
 
@@ -521,8 +531,10 @@ int main(int argc, char *argv[])
                                             return 8;
                                         }
                                         for(int m=0; m<freeworkers.size();m++)
-                                        freeworkers[m].user_id=id;
-                                        busyworkers.push_back(freeworkers[m]);
+                                        {
+                                            freeworkers[m].user_id=id;
+                                            busyworkers.push_back(freeworkers[m]);
+                                        }
                                         freeworkers.clear();
 
                                     }
@@ -558,8 +570,10 @@ int main(int argc, char *argv[])
                                             return 8;
                                         }
                                         for(int m=0; m<freeworkers.size();m++)
-                                        freeworkers[m].user_id=id;
-                                        busyworkers.push_back(freeworkers[m]);
+                                        {
+                                            freeworkers[m].user_id=id;
+                                            busyworkers.push_back(freeworkers[m]);
+                                        }
                                         freeworkers.clear();
                                     }
                                     if(number_of_free_workers == 3)
@@ -608,8 +622,10 @@ int main(int argc, char *argv[])
                                             return 8;
                                         }   
                                         for(int m=0; m<freeworkers.size();m++)
-                                        freeworkers[m].user_id=id;
-                                        busyworkers.push_back(freeworkers[m]);
+                                        {
+                                            freeworkers[m].user_id=id;
+                                            busyworkers.push_back(freeworkers[m]);
+                                        }
                                         freeworkers.clear();
                                     }
                                     if(number_of_free_workers == 4)
@@ -671,8 +687,10 @@ int main(int argc, char *argv[])
                                             return 8;
                                         }   
                                         for(int m=0; m<freeworkers.size();m++)
-                                        freeworkers[m].user_id=id;
-                                        busyworkers.push_back(freeworkers[m]);
+                                        {
+                                            freeworkers[m].user_id=id;
+                                            busyworkers.push_back(freeworkers[m]);
+                                        }
                                         freeworkers.clear();
                                     }
                                     if(number_of_free_workers == 5)
@@ -747,8 +765,10 @@ int main(int argc, char *argv[])
                                             return 8;
                                         }   
                                         for(int m=0; m<freeworkers.size();m++)
-                                        freeworkers[m].user_id=id;
-                                        busyworkers.push_back(freeworkers[m]);
+                                        {
+                                            freeworkers[m].user_id=id;
+                                            busyworkers.push_back(freeworkers[m]);
+                                        }
                                         freeworkers.clear();
                                     }
 
@@ -761,7 +781,7 @@ int main(int argc, char *argv[])
                             worker_struct temp;
                             cout<<"Worker received "<<newfd<<endl;
                             temp.sock_fd=newfd;
-                            temp.user_id=0;
+                            temp.user_id="";
                             freeworkers.push_back(temp);
                         }  
                         
@@ -846,8 +866,8 @@ int main(int argc, char *argv[])
                                     {   
                                         cout<<p<<" "<<i<<endl;
                                         cout<<"Ahcschks"<<endl;
-                                        cout<<"Busyworkers "<<busyworkers[p]<<endl;
-                                        if (busyworkers[p]!=i)
+                                        //cout<<"Busyworkers "<<busyworkers[p]<<endl;
+                                        if (busyworkers[p].sock_fd!=i)
                                         {   
                                             cout<<"Send abort to workers"<<endl;
                                             string abortstring="complete";
@@ -855,7 +875,7 @@ int main(int argc, char *argv[])
                                             cout<<"Abort String "<<abortstring<<endl;
                                             char abortstring_str[abortstring.size()+1];
                                             strcpy(abortstring_str,abortstring.c_str());
-                                            send_error = send(busyworkers[p],abortstring_str,abortstring.size(),0);
+                                            send_error = send(busyworkers[p].sock_fd,abortstring_str,abortstring.size(),0);
                                             if(send_error == -1)
                                             {
                                                 cout<<"Error in Sending Identity"<<endl;
@@ -865,10 +885,15 @@ int main(int argc, char *argv[])
                                     busyusers.erase(busyusers.begin());                                                         
                                     //Also putting all the workers now in the freeworkers vector
                                     for (int p=0; p<busyworkers.size();p++)
-                                    {
-                                        freeworkers.push_back(busyworkers[p]);
+                                    {   
+                                        if(busyworkers[p].user_id==to_string(usersock))
+                                        {
+                                            freeworkers.push_back(busyworkers[p]);
+                                            busyworkers.erase(busyworkers.begin()+p);    
+                                        }
+                                        
                                     }
-                                    busyworkers.erase(busyworkers.begin(),busyworkers.begin()+busyworkers.size());                
+                                    //busyworkers.erase(busyworkers.begin(),busyworkers.begin()+busyworkers.size());                
                                 }
                                
 

@@ -76,7 +76,7 @@ void Generate(char* test_string, int i, int length, int first, int second)
 				for(int j=0;j<length;j++)
 				{
 					final = final + test_string[j];
-				}
+				}+
 				// cout<<final;
 			}
 			// for(int j=0;j<length;j++)
@@ -504,8 +504,8 @@ int main(int argc, char *argv[])
 	    buffer[number_of_chars] = '\0';
 	    string buffer_str=buffer;
 	    int i=0;
-	    cout<<"HAHAHAH"<<endl;
-	    cout<<buffer_str<<endl;
+	    //cout<<"HAHAHAH"<<endl;
+	    //cout<<buffer_str<<endl;
 	    for(;i<number_of_chars;i++)
 	    {
 	    	if(buffer_str[i]==' ')
@@ -515,9 +515,9 @@ int main(int argc, char *argv[])
 	    	}
 	    }
 	    buffer_str=buffer_str.substr(0,i);	    
-	    cout<<buffer_str<<endl;
-	    cout<<"id "<<id<<endl;
-	    cout<<"aborted user "<<aborteduser<<endl;
+	    //cout<<buffer_str<<endl;
+	    //cout<<"id "<<id<<endl;
+	    //cout<<"aborted user "<<aborteduser<<endl;
 	    if(buffer_str=="complete")
 	    {
 	    	cout<<"AAA"<<endl;
@@ -525,11 +525,7 @@ int main(int argc, char *argv[])
 	    	{
 	    		aborted=true;
 	    		cout<<"ABORTED"<<endl;	
-	    		//send_error = send(socket_fd,"----",4,0);
-				//if(send_error == -1)
-				//{
-				//	cout<<"Error"<<endl;
-				//}
+	    		
 	    	}
 	    	
 	    }

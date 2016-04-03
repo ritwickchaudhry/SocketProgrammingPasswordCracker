@@ -31,17 +31,6 @@ struct user_struct
     }
 };
 
-struct worker_struct
-{
-    int sock_fd;
-    int user_id;
-    user_struct() {}
-    user_struct(int a, int b)
-    {
-        sock_fd = a;
- 		user_id = b;
-    }
-};
 
 int lengtharr(string a)
 {

@@ -9,9 +9,19 @@
 #include<string.h>
 using namespace std;
 
-vector<char> symbols;
+vector<char> symbols_111;
+vector<char> symbols_100;
+vector<char> symbols_010;
+vector<char> symbols_001;
+vector<char> symbols_101;
+vector<char> symbols_011;
+vector<char> symbols_110;
+
+string final;
+
 int num,u_let,l_let;
 string temp_hash;
+bool flag=0;
 
 void print(char* str, int length)
 {
@@ -26,146 +36,246 @@ bool check_hash(char* str, int length)
 	return false;
 }
 
-void Generate(char* test_string, int i, int length)
+void Generate(char* test_string, int i, int length, int first, int second)
 {
-	if(i == length)
+	if(!flag)
 	{
-		if(check_hash(test_string,length)) 
+		if(i == length)
 		{
-			print(test_string,length);
-			exit(EXIT_SUCCESS);
-		}
-		// for(int j=0;j<length;j++)
-		// {
-		// 	cout<<test_string[j];
-		// }
-		// cout<<endl;
-		return; 
-	}
-	else
-	{
-		if(num == 1)
-		{
-			if(u_let == 1)
+			if(check_hash(test_string,length)) 
 			{
-				if(l_let == 1)
+				// print(test_string,length);
+				// exit(EXIT_SUCCESS);
+				flag = 1;
+				final = "T ";
+				// final = final + " ";
+				for(int j=0;j<length;j++)
 				{
-					//num = 1 u_let = 1 l_let=1
-					for(int j=0; j<62;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
+					final = final + test_string[j];
 				}
-				else
-				{
-					//num = 1 u_let = 1 l_let=0
-					for(int j=0; j<35;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				}
+				// cout<<final;
 			}
-			else
-			{
-				if(l_let == 1)
-				{
-					// cout<<"YOOO"<<endl;
-					//num = 1 u_let = 0 l_let=1
-					for(int j=0; (j<10) ;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						// cout<<symbols[j];					
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}
-					for (int j = 36; j <62 ; j++)
-					{
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}	
-
-				}
-				else
-				{
-					//num = 1 u_let = 0 l_let=0
-					for(int j=0; j<10;j++)
-					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-
-				}				
-			}
+			// for(int j=0;j<length;j++)
+			// {
+			// 	cout<<test_string[j];
+			// }
+			// cout<<endl;
+			return; 
 		}
 		else
 		{
-			if(u_let == 1)
-			{
-				if(l_let == 1)
+				if(num == 1)
 				{
-					//num = 0 u_let = 1 l_let=1
-					for(int j=10 ; j<62;j++)
+					if(u_let == 1)
 					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				
+						if(l_let == 1)
+						{
+							//num = 1 u_let = 1 l_let=1
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_111[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_111.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_111[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+						else
+						{
+							//num = 1 u_let = 1 l_let=0
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_110[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_110.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_110[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+					}
+					else
+					{
+						if(l_let == 1)
+						{
+							// cout<<"YOOO"<<endl;
+							//num = 1 u_let = 0 l_let=1
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_101[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_101.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_101[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+						else
+						{
+							//num = 1 u_let = 0 l_let=0
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_100[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_100.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_100[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}				
+					}
 				}
 				else
 				{
-					//num = 0 u_let = 1 l_let=0
-					for(int j=10; j<36;j++)
+					if(u_let == 1)
 					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				
-				}
-			}
-			else
-			{
-				if(l_let == 1)
-				{
-					//num = 0 u_let = 0 l_let=1
-					for(int j=36; j<62;j++)
+						if(l_let == 1)
+						{
+							//num = 0 u_let = 1 l_let=1
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_011[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_011.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_011[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+						}
+						else
+						{
+							//num = 0 u_let = 1 l_let=0	
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_010[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_010.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_010[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}				
+						}
+					}
+					else
 					{
-						// cout<<"yo"<<" "<<i<<" "<<length<<endl;
-						test_string[i] = symbols[j];
-						Generate(test_string,i+1,length);
-					}		
-				
+						if(l_let == 1)
+						{
+							//num = 0 u_let = 0 l_let=1	
+							if(i==0)
+							{
+								for(int j=first; j<=second;j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_001[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}
+							else
+							{
+								for(int j=0; j<symbols_001.size();j++)
+								{
+									// cout<<"yo"<<" "<<i<<" "<<length<<endl;
+									test_string[i] = symbols_001[j];
+									Generate(test_string,i+1,length,first,second);
+								}
+							}				
+						}
+					}			
 				}
-			}			
 		}
 	}
+	else return;
 }
 
-string decrypt(string hash, string length, string type)
+void decrypt(string hash, string length, string type, string first, string second)
 {
-
+	final = "";
 	temp_hash = hash;
-	symbols.resize(62);
+	symbols_111.resize(62);
+	symbols_100.resize(10);
+	symbols_010.resize(26);
+	symbols_001.resize(26);
+	symbols_101.resize(36);
+	symbols_011.resize(52);
+	symbols_110.resize(36);
 	//Add Numbers to the symbols set
 	for (int i = 0; i < 10; ++i)
 	{
-		symbols[i]='0' + i;
+		symbols_111[i]='0' + i;
+		symbols_100[i]='0' + i;
+		symbols_101[i]='0' + i;
+		symbols_110[i]='0' + i;
 	}
 	//Add Uppercase letters to the symbols set
 	for (int i = 0; i < 26; ++i)
 	{
-		symbols[i+10] = 'A' + i;
+		symbols_111[i+10] = 'A' + i;
+		symbols_010[i] = 'A' + i;
+		symbols_011[i] = 'A' + i;
+		symbols_110[i+10] = 'A' + i;
 	}
 	//Add Lowercase letters to the symbols set
 	for (int i = 0; i < 26; i++)
 	{
-		symbols[i+36]= 'a' + i;
+		symbols_111[i+36] = 'a' + i;
+		symbols_001[i] = 'a' + i;
+		symbols_011[i+26] = 'a' + i;
+		symbols_101[i+10] = 'a' + i;
 	}
 
 	char length_str[length.size() + 1];
@@ -179,25 +289,30 @@ string decrypt(string hash, string length, string type)
 	l_let = temp_num/100;
 	u_let = temp_num/10 - (l_let*10);
 	num = temp_num%10;
-	// cout<<"num "<<num<<"\n";
-	// cout<<"u_let"<<u_let<<"\n";
-	// cout<<"l_let"<<l_let<<"\n";
-	// cout<<t1<<endl;
-	// cout<<t2<<endl;
-	// cout<<t3<<endl;
-	// cout<<len<<endl;
-	// cout<<len;
+
+	char first_str[first.size()+1];
+	strcpy(first_str,first.data());
+
+	char second_str[second.size()+1];
+	strcpy(second_str,second.data());
+
+	int start = atoi(first_str);
+	int end = atoi(second_str);
+
+	
 	char test_string[len];
 	// test_string.resize(0,len);
 	// cout<<"Generate"<<endl;
-	Generate(test_string,0,len);
-	
+	Generate(test_string,0,len,start,end);
 
-	return string("YO_Sexy");
+	// return string("YO_Sexy");
+	if(!flag) final = "F ";
+	return;
 }
 
 int main()
 {
-	decrypt("aaCgzzoaUE85w","4","111");
+	decrypt("aa/tUD6TYCvb2","6","001","0","9");
+	cout<<final;
 	// cout<<crypt("Ritwick","a")<<endl;
 }
